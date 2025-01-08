@@ -2,7 +2,10 @@ import requests
 from bs4 import BeautifulSoup
 import pandas as pd
 
-def scrape_elo(player_name: str, surface: str):
+def get_elo_df():
+    '''
+    Method that scrapes the Tennis Abstract elo data and returns it as a pandas dataframe
+    '''
     response = requests.get('https://tennisabstract.com/reports/atp_elo_ratings.html')
 
     # check for successful request
@@ -42,6 +45,28 @@ def scrape_elo(player_name: str, surface: str):
         df['Player'] = df['Player'].str.strip().str.title()  # Strips whitespace and ensures proper casing
         df['Player'] = df['Player'].str.replace('\xa0', ' ', regex=True)
 
+        return df
+
+    else:
+        print(f"Failed to retrieve the webpage. Status code: {response.status_code}")
+        return None   
+
+
+
+def scrape_elo(player_name: str, surface: str):
+        '''
+        Method to extract the ELO data we are looking for
+
+        Parameters:
+        - player_name: Name of the tennis player who's elo we are looking for
+        - surface: Playing surface of the match; determines which elo rating of the player we are returning
+
+        Returns:
+        - Float value of the given players elo rating on the given surface
+        '''
+
+        df = get_elo_df()
+
         ####### Extract the elo data we are looking for #################
         player_row = df[df['Player'] == player_name]
 
@@ -54,15 +79,22 @@ def scrape_elo(player_name: str, surface: str):
         else:
             raise ValueError("Invalid Playing Surface Parameter")
         
-    else:
-        print(f"Failed to retrieve the webpage. Status code: {response.status_code}")
-        return None    
+def scrape_player_names():
+    '''
+    Method to scrape all player names available on Tennis Abstract. Used in app to offer player names available.
+
+    Returns
+    - a Series of available player names
+    '''    
+    df = get_elo_df()
+
+    return df['Player']
     
 
-def main():
+'''def main():
 
-    df = scrape_elo("Jannik Sinner", "Hard")
-    df
+    df = scrape_player_names()
+    print(df)
 
 if __name__ == "__main__":
-    main()    
+    main()'''    
