@@ -62,3 +62,20 @@ ratio_data.head()
 
 # %%
 ratio_data.to_csv('Data/golden_ratio_data.csv')
+
+#%%
+def getServe(player: str, surface: str):
+    '''
+    Method to return the service pts won % for a given player on a given surface
+    '''
+    player_data = ratio_data[ratio_data['Name'] == player]
+    surface_data = player_data[player_data['Surface'] == surface]
+    return surface_data['SPW']
+
+def getReturn(player: str, surface: str):
+    '''
+    Method to return the return pts won % for a given player on a given surface
+    '''
+    player_data = ratio_data[ratio_data['Name'] == player]
+    surface_data = player_data[player_data['Surface'] == surface]
+    return surface_data['RPW']
