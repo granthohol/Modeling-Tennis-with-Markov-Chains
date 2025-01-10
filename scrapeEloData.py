@@ -71,11 +71,11 @@ def scrape_elo(player_name: str, surface: str):
         player_row = df[df['Player'] == player_name]
 
         if surface == 'Hard':
-            return player_row['hElo']
+            return player_row['hElo'].iloc[0]
         elif surface == 'Clay':
-            return player_row['cElo']
+            return player_row['cElo'].iloc[0]
         elif surface == 'Grass':
-            return player_row['gElo']
+            return player_row['gElo'].iloc[0]
         else:
             raise ValueError("Invalid Playing Surface Parameter")
         
