@@ -68,14 +68,16 @@ def getServe(player: str, surface: str):
     '''
     Method to return the service pts won % for a given player on a given surface
     '''
+    #ratio_data = pd.read_csv('D:/tennisModeling/Modeling-Tennis-with-Markov-Chains/Data/golden_ratio_data.csv')
     player_data = ratio_data[ratio_data['Name'] == player]
     surface_data = player_data[player_data['Surface'] == surface]
-    return surface_data['SPW']
+    return surface_data['SPW'].iloc[0]
 
 def getReturn(player: str, surface: str):
     '''
     Method to return the return pts won % for a given player on a given surface
     '''
+    #ratio_data = pd.read_csv('D:/tennisModeling/Modeling-Tennis-with-Markov-Chains/Data/golden_ratio_data.csv')
     player_data = ratio_data[ratio_data['Name'] == player]
     surface_data = player_data[player_data['Surface'] == surface]
-    return surface_data['RPW']
+    return surface_data['RPW'].iloc[0]
