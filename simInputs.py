@@ -49,7 +49,7 @@ def p1ActualRetProb(player1: Player, player2: Player, surface: str):
 
     ratio = p1ServeRatio(player1, player2, surface) / p1RetRatio(player1, player2, surface)
 
-    return prob_win_pt/((ratio + 1)/2)
+    return round(prob_win_pt/((ratio + 1)/2), 4)
 
 def p1ActualServeProb(player1: Player, player2: Player, surface: str):
     '''
@@ -58,7 +58,7 @@ def p1ActualServeProb(player1: Player, player2: Player, surface: str):
     '''   
     ratio = p1ServeRatio(player1, player2, surface) / p1RetRatio(player1, player2, surface)
 
-    return ratio * p1ActualRetProb(player1, player2, surface)
+    return round(ratio * p1ActualRetProb(player1, player2, surface), 4)
 
 
 
