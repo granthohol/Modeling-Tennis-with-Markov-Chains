@@ -1,6 +1,5 @@
 from scrapeEloData import scrape_elo
 from serveToReturnRatio import getServe, getReturn
-import pandas as pd
 
 class Player:
     def __init__(self, name):
@@ -66,6 +65,9 @@ def p1ActualServeProb(player1: Player, player2: Player, surface: str):
 def main():
     jannik = Player("Jannik Sinner")
     carlos = Player("Carlos Alcaraz")
+
+    print(f"Jannik Sinner probability to win a return point against Carlos Alcaraz on grass: {p1ActualRetProb(jannik, carlos, 'Grass')}")
+    print(f"Jannik Sinner probability to win a service point against Carlos Alcaraz on grass: {p1ActualServeProb(jannik, carlos, 'Grass')}")
 
 
 if __name__ == "__main__":
