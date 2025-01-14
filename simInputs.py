@@ -17,6 +17,9 @@ class Player:
         '''
         return scrape_elo(self.name, surface)
     
+    def getName(self):
+        return self.name
+    
 def p1PtProb(player1: Player, player2: Player, surface: str):
     p1Elo = player1.getElo(surface)
     p2Elo = player2.getElo(surface)
@@ -45,7 +48,7 @@ def p1ActualRetProb(player1: Player, player2: Player, surface: str):
     Returns the actual probability of player1 winning a return point against player 2 on given surface.
     Incorporates playstyle ratios while restricted to winning any point prob based off of elo
     '''
-    prob_win_pt = p1ServeRatio(player1, player2, surface)
+    prob_win_pt = p1PtProb(player1, player2, surface)
 
     ratio = p1ServeRatio(player1, player2, surface) / p1RetRatio(player1, player2, surface)
 
