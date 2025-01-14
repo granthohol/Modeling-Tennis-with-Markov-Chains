@@ -1,14 +1,16 @@
-from simInputs import Player
+from simInputs import Player, p1ActualRetProb, p1ActualServeProb
 import random
 
 
 class Match():
-
        
-    def __init__(self, player1: Player, player2: Player, surface: str, best_out_of: int, p1Sets: int, p2Sets: int, p1Games: int, p2Games: int, p1GamesTot: int, p2GamesTot: int, p1Pts: int, p2Pts: int, p1PtsTot: int, p2PtsTot: int):
+    def __init__(self, player1: str, player2: str, surface: str, best_out_of: int, p1Sets: int, p2Sets: int, p1Games: int, p2Games: int, p1GamesTot: int, p2GamesTot: int, p1Pts: int, p2Pts: int, p1PtsTot: int, p2PtsTot: int, serving: int):
 
-        self.player1 = player1
-        self.player2 = player2
+        self.match_winner = None
+        self.set_winner = None
+        self.game_winner = None
+        self.player1 = Player(player1)
+        self.player2 = Player(player2)
         self.surface = surface
         self.best_out_of = best_out_of
         self.p1Sets = p1Sets
@@ -21,10 +23,11 @@ class Match():
         self.p2Pts = p2Pts
         self.p1PtsTot = p1PtsTot
         self.p2PtsTot = p2PtsTot
+        self.serving = serving
 
         ''' Parameters:
-        - player1: The player object that is to serve or serving
-        - player2: The player object that is to return or returning
+        - player1: The player object 
+        - player2: The player object 
         - surface: the surface type being played on 
         - best_out_of: how many sets the game is being played out of 
         - p1Sets: how many sets player1 has won
@@ -36,7 +39,8 @@ class Match():
         - p1Pts: how many points player1 has won THIS GAME
         - p2Pts: how many points player2 has won THIS GAME
         - p1PtsTot: how many points player1 has won ALL MATCH
-        - p2PtsTot: how many points player2 has won ALL MATCH '''
+        - p2PtsTot: how many points player2 has won ALL MATCH 
+        - serving: Either 1 or 2, the player that is serving or about to serve'''
 
     # assumes player1 is to serve
     def simMatch(self):
@@ -45,21 +49,58 @@ class Match():
 
         '''
 
-        # dictionary to hold results to return
-
-        games_needed = 0
         if self.best_out_of == 5:
-            games_needed = 3
+            sets_needed = 3
         elif self.best_out_of == 3:
-            games_needed = 2
+            sets_needed = 2
         else:
             raise ValueError("Invalid parameter passed for 'best_out_of' parameter")
         
 
-    
+
+        p1_serve_prob = p1ActualServeProb(self.player1, self.player2, self.surface)
+        p1_ret_prob = p1ActualRetProb(self.player1, self.player2, self.surface)
+
+        liveSet = True # denotes whether there is a possibility of it being a live set and number of games won or points scored so far can be passed
+
+        while True:
+
+            if self.serving == 1: # player 1 is serving first
+                if liveSet:
+                    liveSet = False
+                    if self.simulate_set(p1_serve_prob, p1_ret_prob, self.p1Games, self.p2Games, self.p1Pts, self.p2Pts, True):
+                        self.p1Sets += 1
+                    else:
+                        self.p2Sets += 1
+                else:
+                    if self.simulate_set(p1_serve_prob, p1_ret_prob, 0, 0, 0, 0, True):
+                        self.p1Sets += 1
+                    else:
+                        self.p2Sets += 1
+            else: # player 2 is serving first
+                if liveSet:
+                    liveSet = False
+                    if self.simulate_set(p1_serve_prob, p1_ret_prob, self.p1Games, self.p2Games, self.p1Pts, self.p2Pts, False):
+                        self.p1Sets += 1
+                    else:
+                        self.p2Sets += 1
+                else:
+                    if self.simulate_set(p1_serve_prob, p1_ret_prob, 0, 0, 0, 0, False):
+                        self.p1Sets += 1
+                    else:
+                        self.p2Sets += 1
+
+            # check if anyone has won
+            if self.p1Sets == sets_needed:
+                self.match_winner = self.player1
+                return
+
+            if self.p2Sets == sets_needed:
+                self.match_winner = self.player2
+                return
 
 
-    def simulate_game(self, p1_pts, p2_pts, p_point):
+    def simulate_game(self, p_point: float, p1_pts: int, p2_pts: int):
         '''
         Simulates a game of tennis match and returns True if player1 wins the game. 
         Updates player points total
@@ -72,23 +113,28 @@ class Match():
         p1_score, p2_score = p1_pts, p2_pts
 
         while True:
+
             if random.random() < p_point: # player wins point
                 p1_score += 1
             else:
-                p1_score += 1
+                p2_score += 1
             
             # check if anyone has won game
             if (p1_score >= 4) and (p1_score - p2_score > 1):
                 self.p1PtsTot += p1_score
                 self.p2PtsTot += p2_score
+                if self.game_winner == None:
+                    self.game_winner = self.player1
                 return True
             
-            if (p1_score >= 4) and (p2_score - p1_score > 1):
+            if (p2_score >= 4) and (p2_score - p1_score > 1):
                 self.p1PtsTot += p1_score
                 self.p2PtsTot += p2_score
+                if self.game_winner == None:
+                    self.game_winner = self.player2
                 return False
 
-    def simulate_set(self, p1_serve: float, p1_ret: float, p1_games: int, p2_games: int, p1_pts: int, p2_pts: int, p1_serving: bool):
+    def simulate_set(self, p1_serve: float, p1_ret: float, p1_games: int, p2_games: int, p1_pts: int, p2_pts: int, player1_serving: bool):
         '''
         Simulates a set of a tennis match and returns True if player1 wins the set.
 
@@ -105,34 +151,48 @@ class Match():
         if player1_games > 7 or player2_games > 7:
             raise ValueError("Invalid number of current games won passed as parameter")
         
-        p1_serving = p1_serving
-        firstGame = True
+        p1_serving = player1_serving
+        liveGame = True
 
         while True:
+
             if p1_serving:
-                if firstGame: # first game in sim, need to account for current points scored in this game
-                    firstGame = False
+                if liveGame: # first game in sim, need to account for current points scored in this game
+                    liveGame = False
                     if self.simulate_game(p1_serve, p1_pts, p2_pts):
                         player1_games += 1
+                        self.set_winner = self.player1
+                        p1_serving = False
                     else:
                         player2_games += 1
+                        self.set_winner = self.player2
+                        p1_serving = False
+
                 else: # not first game in sim, each player at 0 points
                     if self.simulate_game(p1_serve, 0, 0):
                         player1_games += 1
+                        p1_serving = False
                     else:
                         player2_games += 1
+                        p1_serving = False
             else: # Player 2 is serving
-                if firstGame:
-                    firstGame = False
+                if liveGame:
+                    liveGame = False
                     if self.simulate_game(p1_ret, p1_pts, p2_pts):
                         player1_games += 1
+                        self.set_winner = self.player1
+                        p1_serving = True
                     else:
                         player2_games += 1
+                        self.set_winner = self.player2
+                        p1_serving = True
                 else:
                     if self.simulate_game(p1_ret, 0, 0):
                         player1_games += 1
+                        p1_serving = True
                     else:
                         player2_games += 1
+                        p1_serving = True
 
             # check for tiebreak
             if player1_games == 6 and player2_games == 6:
@@ -140,23 +200,49 @@ class Match():
                 if self.simulate_set_tiebreak((p1_serve + p1_ret)/2): # pass the probability of player1 winning any point since tiebreaks are ~ even on serves
                     self.p1GamesTot += 7 
                     self.p2GamesTot += 6
+
+                    # if it is p1 turn to serve, set self.serving = 1 so that sim next set knows
+                    if p1_serving == True:
+                        self.serving = 1
+                    else: 
+                        self.serving = 2
+
                     return True
+                
                 # player 2 wins tiebreak and set
                 else: 
                     self.p2GamesTot += 7
                     self.p1GamesTot += 6
+                    # if it is p1 turn to serve, set self.serving = 1 so that sim next set knows
+                    if p1_serving == True:
+                        self.serving = 1
+                    else: 
+                        self.serving = 2
+
                     return False
                 
             # Player 1 wins set
             if player1_games >= 6 and player1_games - player2_games > 1:
                 self.p1GamesTot += player1_games
                 self.p2GamesTot += player2_games
+
+                # if it is p1 turn to serve, set self.serving = 1 so that sim next set knows
+                if p1_serving == True:
+                    self.serving = 1
+                else: 
+                    self.serving = 2
                 return True
             
             # player 2 wins set
             if player2_games >= 6 and player2_games - player1_games > 1:
                 self.p1GamesTot += player1_games
                 self.p2GamesTot += player2_games
+
+                # if it is p1 turn to serve, set self.serving = 1 so that sim next set knows
+                if p1_serving == True:
+                    self.serving = 1
+                else: 
+                    self.serving = 2
                 return False
 
 
@@ -181,9 +267,9 @@ class Match():
             
     def get_dict(self):
         match_dict = {
-            "Winner" : None,
-            "Next Set Winner": None,
-            "Next Game Winner": None, 
+            "Winner" : self.match_winner.getName(),
+            "Next Set Winner": self.set_winner.getName(),
+            "Next Game Winner": self.game_winner.getName(), 
             "Player 1 Sets": self.p1Sets,
             "Player 2 Sets": self.p2Sets,
             "Sets Spread": self.p1Sets - self.p2Sets, 
@@ -191,7 +277,24 @@ class Match():
             "Player 2 Games": self.p2GamesTot,
             "Games Spread": self.p1GamesTot - self.p2GamesTot, 
             "Player 1 Points": self.p1PtsTot,
-            "Player 2 Poitns": self.p2PtsTot,
+            "Player 2 Points": self.p2PtsTot,
             "Points Spread": self.p1PtsTot - self.p2PtsTot,
-            "Total Games": self.p1GamesTot + self.p2GamesTot
+            "Total Games": self.p1GamesTot + self.p2GamesTot,
+            "Total Points": self.p1PtsTot + self.p2PtsTot
         }
+
+        return match_dict
+    
+def main():
+
+    jannikVsCarlos = Match("Carlos Alcaraz", "Jannik Sinner", "Grass", 5, 0, 0, 4, 1, 4, 1, 2, 0, 16, 4, 1)
+    
+    jannikVsCarlos.simMatch()
+
+    match_dict = jannikVsCarlos.get_dict()
+    print("\nMatch Summary:")
+    for key, value in match_dict.items():
+        print(f"{key}: {value}") 
+
+if __name__ == "__main__":
+    main()
