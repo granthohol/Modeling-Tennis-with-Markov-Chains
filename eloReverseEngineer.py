@@ -4,6 +4,7 @@
 
 import random
 
+
 def simulate_game(p_point: float):
     '''
     Simulates a game of tennis match and returns True if player with passed probability wins the game
