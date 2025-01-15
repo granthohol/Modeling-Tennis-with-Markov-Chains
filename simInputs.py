@@ -1,15 +1,20 @@
 from scrapeEloData import scrape_elo
-from serveToReturnRatio import getServe, getReturn
+import pandas as pd
 
 class Player:
     def __init__(self, name):
         self.name = name
+        self.ratio_data = pd.read_csv('https://raw.githubusercontent.com/granthohol/Modeling-Tennis-with-Markov-Chains/main/Data/golden_ratio_data.csv')
 
     def getServePerc(self, surface: str):
-        return getServe(self.name, surface)
+        player_data = self.ratio_data[self.ratio_data['Name'] == self.name]
+        surface_data = player_data[player_data['Surface'] == surface]
+        return surface_data['SPW'].iloc[0]
     
     def getRetPerc(self, surface: str):
-        return getReturn(self.name, surface)
+        player_data = self.ratio_data[self.ratio_data['Name'] == self.name]
+        surface_data = player_data[player_data['Surface'] == surface]
+        return surface_data['RPW'].iloc[0]
     
     def getElo(self, surface: str):
         '''
@@ -19,6 +24,7 @@ class Player:
     
     def getName(self):
         return self.name
+    
     
 def p1PtProb(player1: Player, player2: Player, surface: str):
     p1Elo = player1.getElo(surface)
