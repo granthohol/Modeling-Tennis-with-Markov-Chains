@@ -1,5 +1,7 @@
 import streamlit as st
 import pandas as pd
+from simMatch import Match
+from simInputs import Player
 
 def main():
 
@@ -26,6 +28,10 @@ def main():
         best_out_of = st.selectbox("Best out of how many sets", [3, 5])
 
         serving = st.selectbox("Player Who Is Set to Serve", [player1, player2])
+        if serving == player1:
+            p_serving = 1 # convert to int to pass to sim method
+        else:
+            p_serving = 2
 
         # Dynamically adjust the max_value of the slider based on the best_out_of selection
         max_sets = 2 if best_out_of == 5 else 1
@@ -53,6 +59,31 @@ def main():
         
         calculate = st.button("Run Simulation")
 
+        ###### Sim Matchup #########
+
+        sim_data = [[] for _ in range(14)]
+        
+
+
+
+        if calculate:
+            p1 = Player(player1)
+            p2 = Player(player2)
+
+            matchup = Match(p1, p2, surface, best_out_of, p1SetsWon, p2SetsWon, p1GamesThis, p2GamesThis, p1GamesAll, p2GamesAll, p1PtsThis, p2PtsThis, p1PtsAll, p2PtsAll, p_serving)
+            p1_serve = matchup.getP1Serve()
+            p1_ret = matchup.getP1Ret()
+
+            for _ in range(50):
+                matchup = Match(p1, p2, surface, best_out_of, p1SetsWon, p2SetsWon, p1GamesThis, p2GamesThis, p1GamesAll, p2GamesAll, p1PtsThis, p2PtsThis, p1PtsAll, p2PtsAll, p_serving)
+                matchup.simMatch(p1_serve, p1_ret)
+                match_data = matchup.get_data()
+
+                # add the data from this sim to the dictionary
+            for i, data in enumerate(match_data):
+                sim_data[i].append(data) 
+
+            st.write("Sim Complete")
 
 
 
