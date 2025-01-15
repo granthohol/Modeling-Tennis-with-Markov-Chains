@@ -11,7 +11,7 @@ def main():
 
         st.title("Tennis Match Simulator")
 
-        player_data = pd.read_csv('https://raw.githubusercontent.com/granthohol/Modeling-Tennis-with-Markov-Chains/main/Data/golden_ratio_data.csv')
+        player_data = pd.read_csv('Data/golden_ratio_data.csv')
         player_data = player_data.drop_duplicates(subset=['Name'])
         player_names = player_data['Name'].tolist()
 

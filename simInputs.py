@@ -4,7 +4,7 @@ import pandas as pd
 class Player:
     def __init__(self, name):
         self.name = name
-        self.ratio_data = pd.read_csv('https://raw.githubusercontent.com/granthohol/Modeling-Tennis-with-Markov-Chains/main/Data/golden_ratio_data.csv')
+        self.ratio_data = pd.read_csv('Data/golden_ratio_data.csv')
 
     def getServePerc(self, surface: str):
         player_data = self.ratio_data[self.ratio_data['Name'] == self.name]

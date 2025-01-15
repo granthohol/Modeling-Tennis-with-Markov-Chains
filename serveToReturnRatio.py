@@ -2,9 +2,10 @@
 import pandas as pd
 
 #%%
-raw = pd.read_csv('https://raw.githubusercontent.com/granthohol/Modeling-Tennis-with-Markov-Chains/main/Data/raw_kaggle.csv')
-ret = pd.read_csv('https://raw.githubusercontent.com/granthohol/Modeling-Tennis-with-Markov-Chains/main/Data/return_kaggle.csv')
-serve = pd.read_csv('https://raw.githubusercontent.com/granthohol/Modeling-Tennis-with-Markov-Chains/main/Data/serve_kaggle.csv')
+# raw = pd.read_csv('https://raw.githubusercontent.com/granthohol/Modeling-Tennis-with-Markov-Chains/main/Data/raw_kaggle.csv')
+raw = pd.read_csv('Data/raw_kaggle.csv')
+ret = pd.read_csv('Data/return_kaggle.csv')
+serve = pd.read_csv('Data/serve_kaggle.csv')
 
 # %%
 raw = raw[['Name', 'Surface', 'TP']]
@@ -61,4 +62,4 @@ ratio_data['Golden Ratio'] = ratio_data['SPW'] / ratio_data['RPW']
 ratio_data.head()
 
 # %%
-ratio_data.to_csv('https://raw.githubusercontent.com/granthohol/Modeling-Tennis-with-Markov-Chains/main/Data/golden_ratio_data.csv')
+ratio_data.to_csv('Data/golden_ratio_data.csv')
