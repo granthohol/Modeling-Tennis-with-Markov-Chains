@@ -91,10 +91,10 @@ def scrape_player_names():
     return df['Player']
     
 
-'''def main():
+def main():
 
     df = scrape_player_names()
     print(df)
 
 if __name__ == "__main__":
-    main()'''    
+    main()
