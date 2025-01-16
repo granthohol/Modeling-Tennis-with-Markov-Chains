@@ -122,9 +122,9 @@ def main():
                     prob_win_set1 = (sim_data[1].count(player1) / num_sims) * 100
                     prob_win_game1 = (sim_data[2].count(player1) / num_sims) * 100
 
-                    st.subheader(f"Probability to win the match: {round(prob_win_match1, 2)}%")
-                    st.subheader(f"Probability to win current set: {round(prob_win_set1, 2)}%")
-                    st.subheader(f"Probability to win current game: {round(prob_win_game1, 2)}%") 
+                    st.subheader(f"Probability to win the match: {prob_win_match1:.2f}%")
+                    st.subheader(f"Probability to win current set: {prob_win_set1:.2f}%")
+                    st.subheader(f"Probability to win current game: {prob_win_game1:.2f}%") 
 
                     choice = st.selectbox("Probability to win exactly ___ sets", [0, 1, 2, 3], key=f"play1choice")
 
@@ -138,9 +138,9 @@ def main():
                     prob_win_set2 = (sim_data[1].count(player2) / num_sims) * 100
                     prob_win_game2 = (sim_data[2].count(player2) / num_sims) * 100 
 
-                    st.subheader(f"Probability to win the match: {round(prob_win_match2, 2)}%")
-                    st.subheader(f"Probability to win current set: {round(prob_win_set2, 2)}%")
-                    st.subheader(f"Probability to win current game: {round(prob_win_game2, 2)}%")     
+                    st.subheader(f"Probability to win the match: {prob_win_match2:.2f}%")
+                    st.subheader(f"Probability to win current set: {prob_win_set2:.2f}%")
+                    st.subheader(f"Probability to win current game: {prob_win_game2:.2f}%") 
 
                     choice2 = st.selectbox("Probability to win exactly ___ sets", [0, 1, 2, 3], key=f"play2choice")
 
@@ -174,12 +174,19 @@ def main():
                             "x": 0.5,  # Center the title
                             "xanchor": "center",
                         },
-                        xaxis=dict(title="Sets Spread", showgrid=True),
-                        yaxis=dict(title="Probability", showgrid=True),
+                        xaxis=dict(
+                            title="<span style='font-size: 24px;'>Sets Spread</span>",  # Fix the title syntax here
+                            showgrid=True
+                        ),
+                        yaxis=dict(
+                            title="<span style='font-size: 24px;'>Probability</span>",  # Fix the title syntax here
+                            showgrid=True
+                        ),
                         legend=dict(x=0.7, y=1),
                         template="plotly",
                         height=500
                     )
+
 
                     # Display the plot in Streamlit
                     st.plotly_chart(fig)
@@ -220,12 +227,19 @@ def main():
                             "x": 0.5,  # Center the title
                             "xanchor": "center",
                         },
-                        xaxis=dict(title="Number of Sets", showgrid=True),
-                        yaxis=dict(title="Probability", showgrid=True),
+                        xaxis=dict(
+                            title="<span style='font-size: 24px;'>Number of Sets</span>",  # Fixed title syntax
+                            showgrid=True
+                        ),
+                        yaxis=dict(
+                            title="<span style='font-size: 24px;'>Probability</span>",  # Fixed title syntax
+                            showgrid=True
+                        ),
                         legend=dict(x=0.7, y=1),
                         template="plotly",
                         height=500
                     )
+
 
                     st.plotly_chart(fig2)
 
