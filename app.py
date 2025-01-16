@@ -87,11 +87,24 @@ def main():
         ###### Sim Matchup #########
 
         # list of lists that hold all of the sim data from the simulations
-        
         num_sims = 1000
 
+        # Store if the calculation is already done in session state
+        if 'sim_data' not in st.session_state:
+            st.session_state.sim_data = None
+        
+        if 'calculate' not in st.session_state:
+            st.session_state.calculate = False
+
+        # Perform the simulation if not already done
         if calculate:
-            sim_data = sim(player1, player2, surface, best_out_of, p1SetsWon, p2SetsWon, p1GamesThis, p2GamesThis, p1GamesAll, p2GamesAll, p1PtsThis, p2PtsThis, p1PtsAll, p2PtsAll, p_serving, num_sims)
+            st.session_state.calculate = True  # Set calculation to True after button click
+            
+            st.session_state.sim_data = sim(player1, player2, surface, best_out_of, p1SetsWon, p2SetsWon, p1GamesThis, p2GamesThis, p1GamesAll, p2GamesAll, p1PtsThis, p2PtsThis, p1PtsAll, p2PtsAll, p_serving, num_sims)
+
+        # If simulation is done, display results
+        if st.session_state.calculate and st.session_state.sim_data:
+            sim_data = st.session_state.sim_data
 
             sets, games, points = st.tabs(['Sets', 'Games', 'Points'])
 
@@ -109,13 +122,10 @@ def main():
                     st.subheader(f"Probability to win current set: {round(prob_win_set1, 4)}%")
                     st.subheader(f"Probability to win current game: {round(prob_win_game1, 4)}%") 
 
-                    choice = st.selectbox("Probability to win ___ sets", [0, 1, 2, 3])
+                    choice = st.selectbox("Probability to win exactly ___ sets", [0, 1, 2, 3], key=f"play1choice")
 
-                    
                     prob_this_set = (sim_data[3].count(choice) / num_sims) * 100
                     st.write(f"Probability to win {choice} sets: {round(prob_this_set, 4)}%")
-
-
 
                 with play2:
                     st.header(player2)
@@ -126,11 +136,14 @@ def main():
 
                     st.subheader(f"Probability to win the match: {round(prob_win_match2, 4)}%")
                     st.subheader(f"Probability to win current set: {round(prob_win_set2, 4)}%")
-                    st.subheader(f"Probability to win current game: {round(prob_win_game2, 4)}%")      
+                    st.subheader(f"Probability to win current game: {round(prob_win_game2, 4)}%")     
 
+                    choice2 = st.selectbox("Probability to win exactly ___ sets", [0, 1, 2, 3], key=f"play2choice")
+
+                    prob_this_set2 = (sim_data[4].count(choice2) / num_sims) * 100
+                    st.write(f"Probability to win {choice2} sets: {round(prob_this_set2, 4)}%")
 
                 with graph:
-
                     spread = sim_data[5]
 
                     unique, counts = np.unique(spread, return_counts=True)
@@ -166,8 +179,6 @@ def main():
 
                     # Display the plot in Streamlit
                     st.plotly_chart(fig)
-
-
 
 
 if __name__ == "__main__":
