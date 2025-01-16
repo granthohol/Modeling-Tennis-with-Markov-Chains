@@ -4,11 +4,15 @@ from simMatch import Match
 from simInputs import Player
 import plotly.graph_objs as go
 import numpy as np
-from scipy.stats import gaussian_kde
+import sys
+import os
+
+# Add the parent directory to sys.path
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
 @st.cache_data
 def sim(player1, player2, surface, best_out_of, p1SetsWon, p2SetsWon, p1GamesThis, p2GamesThis, p1GamesAll, p2GamesAll, p1PtsThis, p2PtsThis, p1PtsAll, p2PtsAll, p_serving, num_sims):
-    sim_data = [[] for _ in range(14)]
+    sim_data = [[] for _ in range(15)]
     
     p1 = Player(player1)
     p2 = Player(player2)
@@ -118,14 +122,14 @@ def main():
                     prob_win_set1 = (sim_data[1].count(player1) / num_sims) * 100
                     prob_win_game1 = (sim_data[2].count(player1) / num_sims) * 100
 
-                    st.subheader(f"Probability to win the match: {round(prob_win_match1, 4)}%")
-                    st.subheader(f"Probability to win current set: {round(prob_win_set1, 4)}%")
-                    st.subheader(f"Probability to win current game: {round(prob_win_game1, 4)}%") 
+                    st.subheader(f"Probability to win the match: {round(prob_win_match1, 3)}%")
+                    st.subheader(f"Probability to win current set: {round(prob_win_set1, 3)}%")
+                    st.subheader(f"Probability to win current game: {round(prob_win_game1, 3)}%") 
 
                     choice = st.selectbox("Probability to win exactly ___ sets", [0, 1, 2, 3], key=f"play1choice")
 
                     prob_this_set = (sim_data[3].count(choice) / num_sims) * 100
-                    st.write(f"Probability to win {choice} sets: {round(prob_this_set, 4)}%")
+                    st.write(f"Probability to win {choice} sets: {round(prob_this_set, 3)}%")
 
                 with play2:
                     st.header(player2)
@@ -134,14 +138,14 @@ def main():
                     prob_win_set2 = (sim_data[1].count(player2) / num_sims) * 100
                     prob_win_game2 = (sim_data[2].count(player2) / num_sims) * 100 
 
-                    st.subheader(f"Probability to win the match: {round(prob_win_match2, 4)}%")
-                    st.subheader(f"Probability to win current set: {round(prob_win_set2, 4)}%")
-                    st.subheader(f"Probability to win current game: {round(prob_win_game2, 4)}%")     
+                    st.subheader(f"Probability to win the match: {round(prob_win_match2, 3)}%")
+                    st.subheader(f"Probability to win current set: {round(prob_win_set2, 3)}%")
+                    st.subheader(f"Probability to win current game: {round(prob_win_game2, 3)}%")     
 
                     choice2 = st.selectbox("Probability to win exactly ___ sets", [0, 1, 2, 3], key=f"play2choice")
 
                     prob_this_set2 = (sim_data[4].count(choice2) / num_sims) * 100
-                    st.write(f"Probability to win {choice2} sets: {round(prob_this_set2, 4)}%")
+                    st.write(f"Probability to win {choice2} sets: {round(prob_this_set2, 3)}%")
 
                 with graph:
                     spread = sim_data[5]
@@ -151,8 +155,8 @@ def main():
                     bar_x = unique
                     bar_y = np.round(counts / num_sims, 4)
 
-                    kde = gaussian_kde(spread)
-                    x_vals = np.linspace(min(spread) - 1, max(spread) + 1, 500)
+                    #kde = gaussian_kde(spread)
+                    #x_vals = np.linspace(min(spread) - 1, max(spread) + 1, 500)
                     #kde_y = kde(x_vals)
 
                     fig = go.Figure()
@@ -185,6 +189,48 @@ def main():
                         st.markdown(f'<h3 style="text-align: center;">Mean Sets Spread: +{spread_mean}</h3>', unsafe_allow_html=True)
                     else:
                         st.markdown(f'<h3 style="text-align: center;">Mean Sets Spread: {spread_mean}</h3>', unsafe_allow_html=True)
+
+
+                    st.write()
+
+                    ######### Output distribution of total sets #############
+                    total_sets = sim_data[14]
+
+                    unique2, counts2 = np.unique(total_sets, return_counts=True)
+
+                    bar_x2 = unique2
+                    bar_y2 = np.round(counts2 / num_sims, 4)
+
+                    #kde = gaussian_kde(spread)
+                    #x_vals = np.linspace(min(spread) - 1, max(spread) + 1, 500)
+                    #kde_y = kde(x_vals)
+
+                    fig2 = go.Figure()
+
+                    # barplot
+                    fig2.add_trace(go.Bar(x=bar_x2, y=bar_y2, name="Probability", marker_color="white"))
+
+                    # distribution curve
+                    #fig.add_trace(go.Scatter(x=x_vals, y=kde_y, mode='lines', name="Probability Distribution", line=dict(color='orange', width=2)))
+
+                    # Customize layout
+                    fig2.update_layout(
+                        title={
+                            "text": f"<span style='font-size: 30px;'>Total Number of Sets Probability</span>",
+                            "x": 0.5,  # Center the title
+                            "xanchor": "center",
+                        },
+                        xaxis=dict(title="Number of Sets", showgrid=True),
+                        yaxis=dict(title="Probability", showgrid=True),
+                        legend=dict(x=0.7, y=1),
+                        template="plotly",
+                        height=500
+                    )
+
+                    st.plotly_chart(fig2)
+
+                    sets_mean = round(sum(total_sets) / num_sims, 4)
+                    st.markdown(f'<h3 style="text-align: center;">Mean Total Number of Sets: {sets_mean}</h3>', unsafe_allow_html=True)
 
 
 if __name__ == "__main__":

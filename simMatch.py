@@ -306,7 +306,8 @@ class Match():
             self.p2PtsTot,
             self.p1PtsTot - self.p2PtsTot,
             self.p1GamesTot + self.p2GamesTot,
-            self.p1PtsTot + self.p2PtsTot
+            self.p1PtsTot + self.p2PtsTot,
+            self.p1Sets + self.p2Sets
         ]
 
         return match_data
@@ -322,7 +323,7 @@ def main():
     p1Serve = matchup.getP1Serve()
     p1Ret = matchup.getP1Ret()
 
-    sim_data = [[] for _ in range(14)]
+    sim_data = [[] for _ in range(15)]
 
     
     for _ in range(100000):
