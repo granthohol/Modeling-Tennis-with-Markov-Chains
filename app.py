@@ -80,9 +80,9 @@ def main():
                 matchup.simMatch(p1_serve, p1_ret)
                 match_data = matchup.get_data()
 
-            # add the data from this sim to the dictionary
-            for i, data in enumerate(match_data):
-                sim_data[i].append(data) 
+                # add the data from this sim to the dictionary
+                for i, data in enumerate(match_data):
+                    sim_data[i].append(data) 
 
             sets, games, points = st.tabs(['Sets', 'Games', 'Points'])
 
@@ -91,16 +91,25 @@ def main():
 
                 with play1:
                     st.subheader(player1)
-                    st.write(sim_data)
 
-                    '''
-                    prob_win_match1 = round(sim_data[0].count(str(player1)) / num_sims, 4)
-                    prob_win_set1 = round(sim_data[1].count(player1) / num_sims, 4)
-                    prob_win_game1 = round(sim_data[2].count(player1) / num_sims, 4)
+                    prob_win_match1 = (sim_data[0].count(str(player1)) / num_sims) * 100
+                    prob_win_set1 = (sim_data[1].count(player1) / num_sims) * 100
+                    prob_win_game1 = (sim_data[2].count(player1) / num_sims) * 100
 
-                    st.write(f"Probability to win the match: {prob_win_match1}")
-                    st.write(f"Probability to win next (or current) set: {prob_win_set1}")
-                    st.write(f"Probability to win next (or current) game: {prob_win_game1}") '''
+                    st.write(f"Probability to win the match: {round(prob_win_match1, 4)}%")
+                    st.write(f"Probability to win next (or current) set: {round(prob_win_set1, 4)}%")
+                    st.write(f"Probability to win next (or current) game: {round(prob_win_game1, 4)}%") 
+
+                with play2:
+                    st.subheader(player1)
+
+                    prob_win_match2 = (sim_data[0].count(str(player2)) / num_sims) * 100
+                    prob_win_set2 = (sim_data[1].count(player2) / num_sims) * 100
+                    prob_win_game2 = (sim_data[2].count(player2) / num_sims) * 100 
+
+                    st.write(f"Probability to win the match: {round(prob_win_match2, 4)}%")
+                    st.write(f"Probability to win next (or current) set: {round(prob_win_set2, 4)}%")
+                    st.write(f"Probability to win next (or current) game: {round(prob_win_game2, 4)}%")                     
 
 
 

@@ -45,6 +45,8 @@ def get_elo_df():
         df['Player'] = df['Player'].str.strip().str.title()  # Strips whitespace and ensures proper casing
         df['Player'] = df['Player'].str.replace('\xa0', ' ', regex=True)
 
+        df = df.dropna()
+
         return df
 
     else:
