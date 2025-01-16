@@ -298,10 +298,10 @@ class Match():
             self.game_winner.getName(), # game winner
             self.p1Sets,
             self.p2Sets,
-            self.p1Sets - self.p2Sets, 
+            self.p2Sets - self.p1Sets, 
             self.p1GamesTot,
             self.p2GamesTot,
-            self.p1GamesTot - self.p2GamesTot, 
+            self.p2GamesTot - self.p1GamesTot, 
             self.p1PtsTot,
             self.p2PtsTot,
             self.p1PtsTot - self.p2PtsTot,
