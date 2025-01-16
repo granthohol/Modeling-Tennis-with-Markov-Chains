@@ -4,11 +4,9 @@ from simMatch import Match
 from simInputs import Player
 import plotly.graph_objs as go
 import numpy as np
-import sys
-import os
 
-# Add the parent directory to sys.path
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+def set_wide():
+    st.set_page_config(layout="wide")
 
 @st.cache_data
 def sim(player1, player2, surface, best_out_of, p1SetsWon, p2SetsWon, p1GamesThis, p2GamesThis, p1GamesAll, p2GamesAll, p1PtsThis, p2PtsThis, p1PtsAll, p2PtsAll, p_serving, num_sims):
@@ -33,6 +31,8 @@ def sim(player1, player2, surface, best_out_of, p1SetsWon, p2SetsWon, p1GamesThi
     return sim_data
 
 def main():
+
+    set_wide()
 
     home, about, contact = st.tabs(['Home', 'About', 'Contact'])
 
@@ -122,14 +122,14 @@ def main():
                     prob_win_set1 = (sim_data[1].count(player1) / num_sims) * 100
                     prob_win_game1 = (sim_data[2].count(player1) / num_sims) * 100
 
-                    st.subheader(f"Probability to win the match: {round(prob_win_match1, 3)}%")
-                    st.subheader(f"Probability to win current set: {round(prob_win_set1, 3)}%")
-                    st.subheader(f"Probability to win current game: {round(prob_win_game1, 3)}%") 
+                    st.subheader(f"Probability to win the match: {round(prob_win_match1, 2)}%")
+                    st.subheader(f"Probability to win current set: {round(prob_win_set1, 2)}%")
+                    st.subheader(f"Probability to win current game: {round(prob_win_game1, 2)}%") 
 
                     choice = st.selectbox("Probability to win exactly ___ sets", [0, 1, 2, 3], key=f"play1choice")
 
                     prob_this_set = (sim_data[3].count(choice) / num_sims) * 100
-                    st.write(f"Probability to win {choice} sets: {round(prob_this_set, 3)}%")
+                    st.write(f"Probability to win {choice} sets: {round(prob_this_set, 2)}%")
 
                 with play2:
                     st.header(player2)
@@ -138,14 +138,14 @@ def main():
                     prob_win_set2 = (sim_data[1].count(player2) / num_sims) * 100
                     prob_win_game2 = (sim_data[2].count(player2) / num_sims) * 100 
 
-                    st.subheader(f"Probability to win the match: {round(prob_win_match2, 3)}%")
-                    st.subheader(f"Probability to win current set: {round(prob_win_set2, 3)}%")
-                    st.subheader(f"Probability to win current game: {round(prob_win_game2, 3)}%")     
+                    st.subheader(f"Probability to win the match: {round(prob_win_match2, 2)}%")
+                    st.subheader(f"Probability to win current set: {round(prob_win_set2, 2)}%")
+                    st.subheader(f"Probability to win current game: {round(prob_win_game2, 2)}%")     
 
                     choice2 = st.selectbox("Probability to win exactly ___ sets", [0, 1, 2, 3], key=f"play2choice")
 
                     prob_this_set2 = (sim_data[4].count(choice2) / num_sims) * 100
-                    st.write(f"Probability to win {choice2} sets: {round(prob_this_set2, 3)}%")
+                    st.write(f"Probability to win {choice2} sets: {round(prob_this_set2, 2)}%")
 
                 with graph:
                     spread = sim_data[5]
@@ -184,7 +184,7 @@ def main():
                     # Display the plot in Streamlit
                     st.plotly_chart(fig)
 
-                    spread_mean = round(sum(sim_data[5]) / num_sims, 4)
+                    spread_mean = round(sum(sim_data[5]) / num_sims, 2)
                     if spread_mean >= 0: 
                         st.markdown(f'<h3 style="text-align: center;">Mean Sets Spread: +{spread_mean}</h3>', unsafe_allow_html=True)
                     else:
@@ -229,7 +229,7 @@ def main():
 
                     st.plotly_chart(fig2)
 
-                    sets_mean = round(sum(total_sets) / num_sims, 4)
+                    sets_mean = round(sum(total_sets) / num_sims, 2)
                     st.markdown(f'<h3 style="text-align: center;">Mean Total Number of Sets: {sets_mean}</h3>', unsafe_allow_html=True)
 
 
