@@ -87,7 +87,7 @@ def main():
         ###### Sim Matchup #########
 
         # list of lists that hold all of the sim data from the simulations
-        num_sims = 1000
+        num_sims = 100000
 
         # Store if the calculation is already done in session state
         if 'sim_data' not in st.session_state:
@@ -153,7 +153,7 @@ def main():
 
                     kde = gaussian_kde(spread)
                     x_vals = np.linspace(min(spread) - 1, max(spread) + 1, 500)
-                    kde_y = kde(x_vals)
+                    #kde_y = kde(x_vals)
 
                     fig = go.Figure()
 
@@ -161,12 +161,12 @@ def main():
                     fig.add_trace(go.Bar(x=bar_x, y=bar_y, name="Probability", marker_color="white"))
 
                     # distribution curve
-                    fig.add_trace(go.Scatter(x=x_vals, y=kde_y, mode='lines', name="Probability Distribution", line=dict(color='orange', width=2)))
+                    #fig.add_trace(go.Scatter(x=x_vals, y=kde_y, mode='lines', name="Probability Distribution", line=dict(color='orange', width=2)))
 
                     # Customize layout
                     fig.update_layout(
                         title={
-                            "text": f"Sets Spread Probability<br>{player2} sets - {player1} sets<sup></sup>",
+                            "text": f"<span style='font-size: 30px;'>Sets Spread Probability</span><br>{player2} sets - {player1} sets<sup></sup>",
                             "x": 0.5,  # Center the title
                             "xanchor": "center",
                         },
@@ -179,6 +179,12 @@ def main():
 
                     # Display the plot in Streamlit
                     st.plotly_chart(fig)
+
+                    spread_mean = round(sum(sim_data[5]) / num_sims, 4)
+                    if spread_mean >= 0: 
+                        st.markdown(f'<h3 style="text-align: center;">Mean Sets Spread: +{spread_mean}</h3>', unsafe_allow_html=True)
+                    else:
+                        st.markdown(f'<h3 style="text-align: center;">Mean Sets Spread: {spread_mean}</h3>', unsafe_allow_html=True)
 
 
 if __name__ == "__main__":
