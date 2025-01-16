@@ -1,0 +1,9 @@
+[theme]
+primaryColor="#fbf9f9"
+backgroundColor="#9cb879"
+secondaryBackgroundColor="#fbfafa"
+textColor="#0a0000"
+font="serif"
+
+[ui]
+layout = "wide"
