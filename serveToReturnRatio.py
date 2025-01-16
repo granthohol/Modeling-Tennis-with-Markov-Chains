@@ -57,9 +57,14 @@ ratio_data = ratio_data.groupby(["Name", "Surface"], as_index=False).mean()
 ratio_data = ratio_data[ratio_data['Surface'] != 'Carpet']
 ratio_data.head()
 
+#%%
+ratio_data = ratio_data.dropna()
+
 # %%
 ratio_data['Golden Ratio'] = ratio_data['SPW'] / ratio_data['RPW']
 ratio_data.head()
 
 # %%
 ratio_data.to_csv('Data/golden_ratio_data.csv')
+
+# %%

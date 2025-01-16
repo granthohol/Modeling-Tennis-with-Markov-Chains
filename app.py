@@ -11,7 +11,7 @@ def main():
 
         st.title("Tennis Match Simulator")
 
-        player_data = pd.read_csv('Data/golden_ratio_data.csv')
+        player_data = pd.read_csv('https://raw.githubusercontent.com/granthohol/Modeling-Tennis-with-Markov-Chains/main/Data/golden_ratio_data.csv')
         player_data = player_data.drop_duplicates(subset=['Name'])
         player_names = player_data['Name'].tolist()
 
@@ -61,9 +61,10 @@ def main():
 
         ###### Sim Matchup #########
 
+        # list of lists that hold all of the sim data from the simulations
         sim_data = [[] for _ in range(14)]
         
-
+        num_sims = 1000
 
 
         if calculate:
@@ -74,16 +75,33 @@ def main():
             p1_serve = matchup.getP1Serve()
             p1_ret = matchup.getP1Ret()
 
-            for _ in range(50):
+            for _ in range(num_sims):
                 matchup = Match(p1, p2, surface, best_out_of, p1SetsWon, p2SetsWon, p1GamesThis, p2GamesThis, p1GamesAll, p2GamesAll, p1PtsThis, p2PtsThis, p1PtsAll, p2PtsAll, p_serving)
                 matchup.simMatch(p1_serve, p1_ret)
                 match_data = matchup.get_data()
 
-                # add the data from this sim to the dictionary
+            # add the data from this sim to the dictionary
             for i, data in enumerate(match_data):
                 sim_data[i].append(data) 
 
-            st.write("Sim Complete")
+            sets, games, points = st.tabs(['Sets', 'Games', 'Points'])
+
+            with sets:
+                play1, graph, play2 = st.columns([0.25, 0.5, 0.25])
+
+                with play1:
+                    st.subheader(player1)
+                    st.write(sim_data)
+
+                    '''
+                    prob_win_match1 = round(sim_data[0].count(str(player1)) / num_sims, 4)
+                    prob_win_set1 = round(sim_data[1].count(player1) / num_sims, 4)
+                    prob_win_game1 = round(sim_data[2].count(player1) / num_sims, 4)
+
+                    st.write(f"Probability to win the match: {prob_win_match1}")
+                    st.write(f"Probability to win next (or current) set: {prob_win_set1}")
+                    st.write(f"Probability to win next (or current) game: {prob_win_game1}") '''
+
 
 
 

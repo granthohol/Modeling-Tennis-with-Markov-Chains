@@ -318,21 +318,31 @@ def main():
     carlos = Player("Carlos Alcaraz")
     jannik = Player("Jannik Sinner")
 
-    matchup = Match(carlos, jannik, "Grass", 5, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1)
+    matchup = Match(carlos, jannik, "Grass", 5, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2)
     p1Serve = matchup.getP1Serve()
     p1Ret = matchup.getP1Ret()
 
     sim_data = [[] for _ in range(14)]
 
     
-    for _ in range(5000):
-        matchup = Match(carlos, jannik, "Grass", 5, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1)
+    for _ in range(100000):
+        matchup = Match(carlos, jannik, "Grass", 5, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2)
         matchup.simMatch(p1Serve, p1Ret)
         match_data = matchup.get_data()
 
         # add the data from this sim to the dictionary
         for i, data in enumerate(match_data):
             sim_data[i].append(data) 
+
+    prob_win_match1 = round(sim_data[0].count("Jannik Sinner") / 100000, 4)
+    prob_win_set1 = round(sim_data[1].count('Jannik Sinner') / 100000, 4)
+    prob_win_game1 = round(sim_data[2].count('Jannik Sinner') / 100000, 4)
+
+    print(f"Probability to win the match: {prob_win_match1}")
+    print(f"Probability to win next (or current) set: {prob_win_set1}")
+    print(f"Probability to win next (or current) game: {prob_win_game1}")     
+
+    print(sim_data[0])   
 
     '''print("\nMatch Summary:")
     for i in range(14):
