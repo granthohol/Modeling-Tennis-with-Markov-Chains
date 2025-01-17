@@ -4,6 +4,8 @@ from simMatch import Match
 from simInputs import Player
 import plotly.graph_objs as go
 import numpy as np
+import math
+from scipy.stats import gaussian_kde
 
 def set_wide():
     st.set_page_config(layout="wide")
@@ -112,6 +114,8 @@ def main():
 
             sets, games, points = st.tabs(['Sets', 'Games', 'Points'])
 
+
+            ########### Sets Tab #############
             with sets:
                 play1, graph, play2 = st.columns([0.3, 0.4, 0.3])
 
@@ -145,7 +149,7 @@ def main():
                     choice2 = st.selectbox("Probability to win exactly ___ sets", [0, 1, 2, 3], key=f"play2choice")
 
                     prob_this_set2 = (sim_data[4].count(choice2) / num_sims) * 100
-                    st.write(f"Probability to win {choice2} sets: {round(prob_this_set2, 2)}%")
+                    st.write(f"Probability to win {choice2} sets: {prob_this_set2:.2f}%")
 
                 with graph:
                     spread = sim_data[5]
@@ -245,6 +249,234 @@ def main():
 
                     sets_mean = round(sum(total_sets) / num_sims, 2)
                     st.markdown(f'<h3 style="text-align: center;">Mean Total Number of Sets: {sets_mean}</h3>', unsafe_allow_html=True)
+
+
+                ########## Games Tab ###############
+                with games:
+
+                    play1G, graphG, play2G = st.columns([0.3, 0.4, 0.3])
+
+                    with play1G:
+                        st.header(player1)
+                        games1 = sim_data[6]
+
+                        mean_won = sum(games1) / num_sims
+                        highest = max(games1)
+                        lowest = min(games1)
+
+                        squared_diffs = [(x - mean_won) ** 2 for x in games1]
+                        var = sum(squared_diffs) / num_sims
+                        std = math.sqrt(var)
+
+                        st.subheader(f"Mean Games Won: {mean_won:.2f}")
+                        st.subheader(f"Highest Number of Games Won: {highest}")
+                        st.subheader(f"Lowest Number of Games Won: {lowest}")
+                        st.subheader(f"Standard Deviation of Games Won: {std:.2f}")
+                    
+                        moreThan1 = st.number_input("Probability to win >= ___ games", min_value=0, max_value=None, value=0, key=f"play1More")
+                        prob_more_than = len([x for x in games1 if x >= moreThan1]) / num_sims
+                        st.write(f"Probability to win {moreThan1} games or more: {prob_more_than:.2f}")
+
+
+
+
+
+                    with play2G:
+                        st.header(player2)
+
+                        games2 = sim_data[7]
+
+                        mean_won2 = sum(games2) / num_sims
+                        highest2 = max(games2)
+                        lowest2 = min(games2)
+
+                        squared_diffs = [(x - mean_won2) ** 2 for x in games2]
+                        var = sum(squared_diffs) / num_sims
+                        std2 = math.sqrt(var)
+
+                        st.subheader(f"Mean Games Won: {mean_won2:.2f}")
+                        st.subheader(f"Highest Number of Games Won: {highest2}")
+                        st.subheader(f"Lowest Number of Games Won: {lowest2}")
+                        st.subheader(f"Standard Deviation of Games Won: {std2:.2f}")
+
+                        moreThan2 = st.number_input("Probability to win >= ___ games", min_value=0, max_value=None, value=0, key=f"play2More")
+                        prob_more_than2 = len([x for x in games2 if x >= moreThan2]) / num_sims
+                        st.write(f"Probability to win {moreThan2} games or more: {prob_more_than2:.2f}")                        
+
+                    with graphG:
+                        spreadG = sim_data[8]
+
+                        @st.cache_data
+                        def printSpreadGraphG(spreadG):
+                            '''
+                            Method to output the graph of the game spreads
+                            We cache this method so that it does not rerun when widget inputs are updated
+                            '''
+                            spreadG = spreadG
+
+                            uniqueG, countsG = np.unique(spreadG, return_counts=True)
+
+                            bar_xG = uniqueG
+                            bar_yG = np.round(countsG / num_sims, 4)
+
+                            kde = gaussian_kde(spreadG)
+                            x_vals = np.linspace(min(spreadG) - 1, max(spreadG) + 1, 500)
+                            kde_y = kde(x_vals)
+
+                            figG = go.Figure()
+
+                            # barplot
+                            figG.add_trace(go.Bar(x=bar_xG, y=bar_yG, name="Probability", marker_color="white"))
+
+                            # distribution curve
+                            figG.add_trace(go.Scatter(x=x_vals, y=kde_y, mode='lines', name="Probability Distribution", line=dict(color='orange', width=2)))
+
+                            # Customize layout
+                            figG.update_layout(
+                                title={
+                                    "text": f"<span style='font-size: 30px;'>Games Spread Probability</span><br>{player2} games - {player1} games<sup></sup>",
+                                    "x": 0.5,  # Center the title
+                                    "xanchor": "center",
+                                },
+                                xaxis=dict(
+                                    title="<span style='font-size: 24px;'>Games Spread</span>",  # Fix the title syntax here
+                                    showgrid=True
+                                ),
+                                yaxis=dict(
+                                    title="<span style='font-size: 24px;'>Probability</span>",  # Fix the title syntax here
+                                    showgrid=True
+                                ),
+                                legend=dict(x=0.7, y=1),
+                                template="plotly",
+                                height=500
+                            )
+
+                            # Display the plot in Streamlit
+                            st.plotly_chart(figG) 
+
+                            # output mean games spread
+                            games_spread_mean = sum(spreadG) / num_sims
+                            st.markdown(f'<h3 style="text-align: center;">Mean Games Spread: {games_spread_mean}</h3>', unsafe_allow_html=True)
+                            # end method
+
+                        printSpreadGraphG(spreadG)      
+
+
+
+
+
+
+                        ######## Games Total Graph ###############
+                        totG = sim_data[12]
+
+                        @st.cache_data
+                        def printGraphTotG(totG):
+                            '''
+                            Method to output the graph of total number of games
+                            We cache this method so that it does not rerun when widget inputs are updated
+                            '''
+
+                            uniqueTotG, countsTotG = np.unique(totG, return_counts=True)
+
+                            bar_xTotG = uniqueTotG
+                            bar_yTotG = np.round(countsTotG / num_sims, 4)
+
+
+                            kde2 = gaussian_kde(totG)
+                            x_vals2 = np.linspace(min(totG) - 1, max(totG) + 1, 500)
+                            kde_y2 = kde2(x_vals2)
+
+                            figTotG = go.Figure()
+
+                            # barplot
+                            figTotG.add_trace(go.Bar(x=bar_xTotG, y=bar_yTotG, name="Probability", marker_color="white"))
+
+                            # distribution curve
+                            figTotG.add_trace(go.Scatter(x=x_vals2, y=kde_y2, mode='lines', name="Probability Distribution", line=dict(color='orange', width=2)))
+
+                            # Customize layout
+                            figTotG.update_layout(
+                                title={
+                                    "text": f"<span style='font-size: 30px;'>Total Number of Games Probability</span>",
+                                    "x": 0.5,  # Center the title
+                                    "xanchor": "center",
+                                },
+                                xaxis=dict(
+                                    title="<span style='font-size: 24px;'>Total Number of Games</span>",  # Fix the title syntax here
+                                    showgrid=True
+                                ),
+                                yaxis=dict(
+                                    title="<span style='font-size: 24px;'>Probability</span>",  # Fix the title syntax here
+                                    showgrid=True
+                                ),
+                                legend=dict(x=0.7, y=1),
+                                template="plotly",
+                                height=500
+                            )
+
+                            # Display the plot in Streamlit
+                            st.plotly_chart(figTotG)     
+
+                            # output mean total games
+                            games_total_mean = sum(totG) / num_sims
+                            st.markdown(f'<h3 style="text-align: center;">Mean Number of Games: {games_total_mean}</h3>', unsafe_allow_html=True)
+
+                            ### end method
+
+                        printGraphTotG(totG)
+    
+
+
+                        # Create option to calculate probability of more than a certain number of games
+                        @st.cache_data
+                        def precompute_cumulative_counts(totG):
+                            '''
+                            Method to compute and return the cumulative number of occurences of each number of games in the sim
+                            '''
+                            totG_sorted = sorted(totG)
+                            cumulative_counts = {}
+                            n = len(totG_sorted)
+                            for i, value in enumerate(totG_sorted):
+                                if value not in cumulative_counts:
+                                    cumulative_counts[value] = n - i
+                            return cumulative_counts
+
+                        # Callback function for dynamic updates
+                        def calculate_probability_totG(total_more, cumulative_counts, num_sims):
+                            '''
+                            Method to compute and return the probability of seeing x number of games or more from the sim
+                            '''
+                            if total_more in cumulative_counts:
+                                return cumulative_counts[total_more] / num_sims
+                            elif total_more > max(cumulative_counts.keys()):
+                                return 0.0
+                            else:
+                                return 1.0
+
+                        cum_counts = precompute_cumulative_counts(totG)
+
+                        # Define number input with a callback
+                        st.number_input(
+                            "Probability of ___ games or more:",
+                            min_value=0,
+                            max_value=None,
+                            value=0,
+                            key="total_more",
+                            on_change=lambda: st.session_state.update({
+                                "prob_total_more": calculate_probability_totG(
+                                    st.session_state['total_more'], cum_counts, num_sims
+                                )
+                            }),
+                        )
+
+                        # Display the result dynamically
+                        st.write(
+                            f"Probability of {st.session_state.get('total_more', 0)} games or more: "
+                            f"{st.session_state.get('prob_total_more', 0.0):.2f}"
+                        )         
+                                         
+
+
 
 
 if __name__ == "__main__":
