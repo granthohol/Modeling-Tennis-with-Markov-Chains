@@ -120,7 +120,7 @@ def main():
         if st.session_state.calculate and st.session_state.sim_data:
             sim_data = st.session_state.sim_data
 
-            sets, games, points = st.tabs(['Sets', 'Games', 'Points'])
+            sets, games, points, misc = st.tabs(['Sets', 'Games', 'Points', 'Misc'])
 
 
             ########### Sets Tab #############
@@ -387,10 +387,6 @@ def main():
                         printSpreadGraphG(spreadG)      
 
 
-
-
-
-
                         ######## Games Total Graph ###############
                         totG = sim_data[12]
 
@@ -499,6 +495,16 @@ def main():
                             f"Probability of {st.session_state.get('total_more', 0)} games or more: "
                             f"{st.session_state.get('prob_total_more', 0.0):.2f}"
                         )         
+
+
+            ##### Points tab ########
+                with points:
+
+                    play1P, graphP, play2P = st.columns([0.3, 0.4, 0.3])
+
+                    with play1P:
+                        return
+
                                          
 
 
