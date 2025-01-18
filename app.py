@@ -2,18 +2,26 @@ import streamlit as st
 import pandas as pd
 from simMatch import Match
 from simInputs import Player
+from scrapeEloData import scrape_player_names
 import plotly.graph_objs as go
 import numpy as np
 import math
 from scipy.stats import gaussian_kde
+import time
 
 def set_wide():
+    '''
+    Method to set the page configuration to permanently be wide
+    '''
     st.set_page_config(layout="wide")
 
 @st.cache_data
 def sim(player1, player2, surface, best_out_of, p1SetsWon, p2SetsWon, p1GamesThis, p2GamesThis, p1GamesAll, p2GamesAll, p1PtsThis, p2PtsThis, p1PtsAll, p2PtsAll, p_serving, num_sims):
+    '''
+    Main match simulation call method. Stores the data from the simMatch method call and returns it as a list.
+    '''
     sim_data = [[] for _ in range(15)]
-    
+        
     p1 = Player(player1)
     p2 = Player(player2)
 
@@ -42,10 +50,10 @@ def main():
 
         st.title("Tennis Match Simulator")
 
-        player_data = pd.read_csv('https://raw.githubusercontent.com/granthohol/Modeling-Tennis-with-Markov-Chains/main/Data/golden_ratio_data.csv')
-        player_data = player_data.drop_duplicates(subset=['Name'])
-        player_names = player_data['Name'].tolist()
+ 
+        player_names = scrape_player_names()
 
+        ### Get inputs for the match simulation ###
         player1 = st.selectbox("Player 1",
                               player_names,
                               key="player1")
@@ -63,6 +71,9 @@ def main():
             p_serving = 1 # convert to int to pass to sim method
         else:
             p_serving = 2
+
+        num_sims = st.number_input("Number of simulations (Max: 100,000)", min_value=1, value=100000, max_value=100000)
+        
 
         # Dynamically adjust the max_value of the slider based on the best_out_of selection
         max_sets = 2 if best_out_of == 5 else 1
@@ -86,14 +97,11 @@ def main():
             p2GamesThis = st.number_input("Games Won This Set", min_value=0, max_value=7, value=0, key=f"p2_games_this")
             p2PtsAll = st.number_input("Points Won All Match", min_value=0, max_value=None, value=0, key=f"p2_pts_all")
             p2PtsThis = st.number_input("Points Won This Game", min_value=0, max_value=None, value=0, key=f"p2_pts_this")
-
         
         calculate = st.button("Run Simulation")
 
         ###### Sim Matchup #########
 
-        # list of lists that hold all of the sim data from the simulations
-        num_sims = 100000
 
         # Store if the calculation is already done in session state
         if 'sim_data' not in st.session_state:
@@ -272,7 +280,16 @@ def main():
                         st.subheader(f"Highest Number of Games Won: {highest}")
                         st.subheader(f"Lowest Number of Games Won: {lowest}")
                         st.subheader(f"Standard Deviation of Games Won: {std:.2f}")
+                        
+                        # cover spread probability
+                        spreadG = sim_data[8]
+                        coverSpread1 = st.number_input("Probability to win by ___ games or more", min_value=0, max_value=None, value=0, key=f"cover1")
+                        prob_cover = len([x for x in spreadG if x <= -coverSpread1]) / num_sims
+                        st.write(f"Probability to win by {coverSpread1} games or more: {prob_cover:.2f}")
+
+                        st.write("\n")
                     
+                        # total games won probability 
                         moreThan1 = st.number_input("Probability to win >= ___ games", min_value=0, max_value=None, value=0, key=f"play1More")
                         prob_more_than = len([x for x in games1 if x >= moreThan1]) / num_sims
                         st.write(f"Probability to win {moreThan1} games or more: {prob_more_than:.2f}")
@@ -299,6 +316,14 @@ def main():
                         st.subheader(f"Lowest Number of Games Won: {lowest2}")
                         st.subheader(f"Standard Deviation of Games Won: {std2:.2f}")
 
+                        # cover spread probability 
+                        coverSpread2 = st.number_input("Probability to win by ___ games or more", min_value=0, max_value=None, value=0, key=f"cover2")
+                        prob_cover2 = len([x for x in spreadG if x >= coverSpread1]) / num_sims
+                        st.write(f"Probability to win by {coverSpread2} games or more: {prob_cover2:.2f}")
+
+                        st.write("\n")
+
+                        # total games won probability
                         moreThan2 = st.number_input("Probability to win >= ___ games", min_value=0, max_value=None, value=0, key=f"play2More")
                         prob_more_than2 = len([x for x in games2 if x >= moreThan2]) / num_sims
                         st.write(f"Probability to win {moreThan2} games or more: {prob_more_than2:.2f}")                        
@@ -356,7 +381,7 @@ def main():
 
                             # output mean games spread
                             games_spread_mean = sum(spreadG) / num_sims
-                            st.markdown(f'<h3 style="text-align: center;">Mean Games Spread: {games_spread_mean}</h3>', unsafe_allow_html=True)
+                            st.markdown(f'<h3 style="text-align: center;">Mean Games Spread: {games_spread_mean:.2f}</h3>', unsafe_allow_html=True)
                             # end method
 
                         printSpreadGraphG(spreadG)      
@@ -419,7 +444,7 @@ def main():
 
                             # output mean total games
                             games_total_mean = sum(totG) / num_sims
-                            st.markdown(f'<h3 style="text-align: center;">Mean Number of Games: {games_total_mean}</h3>', unsafe_allow_html=True)
+                            st.markdown(f'<h3 style="text-align: center;">Mean Number of Games: {games_total_mean:.2f}</h3>', unsafe_allow_html=True)
 
                             ### end method
 
