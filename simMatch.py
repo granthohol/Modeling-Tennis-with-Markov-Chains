@@ -83,8 +83,10 @@ class Match():
                 if liveSet:
                     liveSet = False
                     if self.simulate_set(p1_serve_prob, p1_ret_prob, self.p1Games, self.p2Games, self.p1Pts, self.p2Pts, True):
+                        self.set_winner = self.player1
                         self.p1Sets += 1
                     else:
+                        self.set_winner = self.player2
                         self.p2Sets += 1
                 else:
                     if self.simulate_set(p1_serve_prob, p1_ret_prob, 0, 0, 0, 0, True):
@@ -187,11 +189,9 @@ class Match():
                     liveGame = False
                     if self.simulate_game(p1_serve, p1_pts, p2_pts):
                         player1_games += 1
-                        self.set_winner = self.player1
                         p1_serving = False
                     else:
                         player2_games += 1
-                        self.set_winner = self.player2
                         p1_serving = False
 
                 else: # not first game in sim, each player at 0 points
