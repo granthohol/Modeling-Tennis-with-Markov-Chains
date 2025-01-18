@@ -83,20 +83,30 @@ def scrape_elo(player_name: str, surface: str):
         
 def scrape_player_names():
     '''
-    Method to scrape all player names available on Tennis Abstract. Used in app to offer player names available.
+    Method to scrape all player names available on Tennis Abstract and combine with available names in serve dataframes.
+    Used in app to offer player names available.
 
     Returns
-    - a Series of available player names
+    - a list of available player names
     '''    
     df = get_elo_df()
+    df = df.drop_duplicates(subset=['Player'])
+    df = df.dropna()
+    df = df['Player']
+    
+    df2 = pd.read_csv('https://raw.githubusercontent.com/granthohol/Modeling-Tennis-with-Markov-Chains/main/Data/golden_ratio_data.csv')
+    df2 = df2.drop_duplicates().dropna()
+    df2_names = df2['Name']
 
-    return df['Player']
+    both = pd.Series(list(set(df2_names) & set(df))).reset_index(drop=True)
+    
+    return sorted(both.tolist())
     
 
 def main():
 
     df = scrape_player_names()
-    print(df)
+    print(len(df))
 
 if __name__ == "__main__":
     main()
