@@ -20,7 +20,7 @@ def sim(player1, player2, surface, best_out_of, p1SetsWon, p2SetsWon, p1GamesThi
     '''
     Main match simulation call method. Stores the data from the simMatch method call and returns it as a list.
     '''
-    sim_data = [[] for _ in range(15)]
+    sim_data = [[] for _ in range(17)]
         
     p1 = Player(player1)
     p2 = Player(player2)
@@ -162,52 +162,56 @@ def main():
                 with graph:
                     spread = sim_data[5]
 
-                    unique, counts = np.unique(spread, return_counts=True)
+                    @st.cache_data
+                    def printGraph1(spread):
+                        unique, counts = np.unique(spread, return_counts=True)
 
-                    bar_x = unique
-                    bar_y = np.round(counts / num_sims, 4)
+                        bar_x = unique
+                        bar_y = np.round(counts / num_sims, 4)
 
-                    #kde = gaussian_kde(spread)
-                    #x_vals = np.linspace(min(spread) - 1, max(spread) + 1, 500)
-                    #kde_y = kde(x_vals)
+                        #kde = gaussian_kde(spread)
+                        #x_vals = np.linspace(min(spread) - 1, max(spread) + 1, 500)
+                        #kde_y = kde(x_vals)
 
-                    fig = go.Figure()
+                        fig = go.Figure()
 
-                    # barplot
-                    fig.add_trace(go.Bar(x=bar_x, y=bar_y, name="Probability", marker_color="white"))
+                        # barplot
+                        fig.add_trace(go.Bar(x=bar_x, y=bar_y, name="Probability", marker_color="white"))
 
-                    # distribution curve
-                    #fig.add_trace(go.Scatter(x=x_vals, y=kde_y, mode='lines', name="Probability Distribution", line=dict(color='orange', width=2)))
+                        # distribution curve
+                        #fig.add_trace(go.Scatter(x=x_vals, y=kde_y, mode='lines', name="Probability Distribution", line=dict(color='orange', width=2)))
 
-                    # Customize layout
-                    fig.update_layout(
-                        title={
-                            "text": f"<span style='font-size: 30px;'>Sets Spread Probability</span><br>{player2} sets - {player1} sets<sup></sup>",
-                            "x": 0.5,  # Center the title
-                            "xanchor": "center",
-                        },
-                        xaxis=dict(
-                            title="<span style='font-size: 24px;'>Sets Spread</span>",  # Fix the title syntax here
-                            showgrid=True
-                        ),
-                        yaxis=dict(
-                            title="<span style='font-size: 24px;'>Probability</span>",  # Fix the title syntax here
-                            showgrid=True
-                        ),
-                        legend=dict(x=0.7, y=1),
-                        template="plotly",
-                        height=500
-                    )
+                        # Customize layout
+                        fig.update_layout(
+                            title={
+                                "text": f"<span style='font-size: 30px;'>Sets Spread Probability</span><br>{player2} sets - {player1} sets<sup></sup>",
+                                "x": 0.5,  # Center the title
+                                "xanchor": "center",
+                            },
+                            xaxis=dict(
+                                title="<span style='font-size: 24px;'>Sets Spread</span>",  # Fix the title syntax here
+                                showgrid=True
+                            ),
+                            yaxis=dict(
+                                title="<span style='font-size: 24px;'>Probability</span>",  # Fix the title syntax here
+                                showgrid=True
+                            ),
+                            legend=dict(x=0.7, y=1),
+                            template="plotly",
+                            height=500
+                        )
 
 
-                    # Display the plot in Streamlit
-                    st.plotly_chart(fig)
+                        # Display the plot in Streamlit
+                        st.plotly_chart(fig, use_container_width=True)
 
-                    spread_mean = round(sum(sim_data[5]) / num_sims, 2)
-                    if spread_mean >= 0: 
-                        st.markdown(f'<h3 style="text-align: center;">Mean Sets Spread: +{spread_mean}</h3>', unsafe_allow_html=True)
-                    else:
-                        st.markdown(f'<h3 style="text-align: center;">Mean Sets Spread: {spread_mean}</h3>', unsafe_allow_html=True)
+                        spread_mean = round(sum(sim_data[5]) / num_sims, 2)
+                        if spread_mean >= 0: 
+                            st.markdown(f'<h3 style="text-align: center;">Mean Sets Spread: +{spread_mean}</h3>', unsafe_allow_html=True)
+                        else:
+                            st.markdown(f'<h3 style="text-align: center;">Mean Sets Spread: {spread_mean}</h3>', unsafe_allow_html=True)
+
+                    printGraph1(spread)
 
 
                     st.write()
@@ -215,52 +219,57 @@ def main():
                     ######### Output distribution of total sets #############
                     total_sets = sim_data[14]
 
-                    unique2, counts2 = np.unique(total_sets, return_counts=True)
+                    @st.cache_data
+                    def printGraph2(total_sets):
 
-                    bar_x2 = unique2
-                    bar_y2 = np.round(counts2 / num_sims, 4)
+                        unique2, counts2 = np.unique(total_sets, return_counts=True)
 
-                    #kde = gaussian_kde(spread)
-                    #x_vals = np.linspace(min(spread) - 1, max(spread) + 1, 500)
-                    #kde_y = kde(x_vals)
+                        bar_x2 = unique2
+                        bar_y2 = np.round(counts2 / num_sims, 4)
 
-                    fig2 = go.Figure()
+                        #kde = gaussian_kde(spread)
+                        #x_vals = np.linspace(min(spread) - 1, max(spread) + 1, 500)
+                        #kde_y = kde(x_vals)
 
-                    # barplot
-                    fig2.add_trace(go.Bar(x=bar_x2, y=bar_y2, name="Probability", marker_color="white"))
+                        fig2 = go.Figure()
 
-                    # distribution curve
-                    #fig.add_trace(go.Scatter(x=x_vals, y=kde_y, mode='lines', name="Probability Distribution", line=dict(color='orange', width=2)))
+                        # barplot
+                        fig2.add_trace(go.Bar(x=bar_x2, y=bar_y2, name="Probability", marker_color="white"))
 
-                    # Customize layout
-                    fig2.update_layout(
-                        title={
-                            "text": f"<span style='font-size: 30px;'>Total Number of Sets Probability</span>",
-                            "x": 0.5,  # Center the title
-                            "xanchor": "center",
-                        },
-                        xaxis=dict(
-                            title="<span style='font-size: 24px;'>Number of Sets</span>",  # Fixed title syntax
-                            showgrid=True
-                        ),
-                        yaxis=dict(
-                            title="<span style='font-size: 24px;'>Probability</span>",  # Fixed title syntax
-                            showgrid=True
-                        ),
-                        legend=dict(x=0.7, y=1),
-                        template="plotly",
-                        height=500
-                    )
+                        # distribution curve
+                        #fig.add_trace(go.Scatter(x=x_vals, y=kde_y, mode='lines', name="Probability Distribution", line=dict(color='orange', width=2)))
+
+                        # Customize layout
+                        fig2.update_layout(
+                            title={
+                                "text": f"<span style='font-size: 30px;'>Total Number of Sets Probability</span>",
+                                "x": 0.5,  # Center the title
+                                "xanchor": "center",
+                            },
+                            xaxis=dict(
+                                title="<span style='font-size: 24px;'>Number of Sets</span>",  # Fixed title syntax
+                                showgrid=True
+                            ),
+                            yaxis=dict(
+                                title="<span style='font-size: 24px;'>Probability</span>",  # Fixed title syntax
+                                showgrid=True
+                            ),
+                            legend=dict(x=0.7, y=1),
+                            template="plotly",
+                            height=500
+                        )
 
 
-                    st.plotly_chart(fig2)
+                        st.plotly_chart(fig2, use_container_width=True)
 
-                    sets_mean = round(sum(total_sets) / num_sims, 2)
-                    st.markdown(f'<h3 style="text-align: center;">Mean Total Number of Sets: {sets_mean}</h3>', unsafe_allow_html=True)
+                        sets_mean = round(sum(total_sets) / num_sims, 2)
+                        st.markdown(f'<h3 style="text-align: center;">Mean Total Number of Sets: {sets_mean}</h3>', unsafe_allow_html=True)
+
+                    printGraph2(total_sets)
 
 
                 ########## Games Tab ###############
-                with games:
+            with games:
 
                     play1G, graphG, play2G = st.columns([0.3, 0.4, 0.3])
 
@@ -293,9 +302,6 @@ def main():
                         moreThan1 = st.number_input("Probability to win >= ___ games", min_value=0, max_value=None, value=0, key=f"play1More")
                         prob_more_than = len([x for x in games1 if x >= moreThan1]) / num_sims
                         st.write(f"Probability to win {moreThan1} games or more: {prob_more_than:.2f}")
-
-
-
 
 
                     with play2G:
@@ -377,7 +383,7 @@ def main():
                             )
 
                             # Display the plot in Streamlit
-                            st.plotly_chart(figG) 
+                            st.plotly_chart(figG, use_container_width=True) 
 
                             # output mean games spread
                             games_spread_mean = sum(spreadG) / num_sims
@@ -436,7 +442,7 @@ def main():
                             )
 
                             # Display the plot in Streamlit
-                            st.plotly_chart(figTotG)     
+                            st.plotly_chart(figTotG, use_container_width=True)     
 
                             # output mean total games
                             games_total_mean = sum(totG) / num_sims
@@ -498,14 +504,122 @@ def main():
 
 
             ##### Points tab ########
-                with points:
+            with points:
 
                     play1P, graphP, play2P = st.columns([0.3, 0.4, 0.3])
+                    points_spread = sim_data[11]
 
                     with play1P:
-                        return
+                        st.header(player1)
 
-                                         
+                        points1 = sim_data[9]
+
+
+                        mean_points1 = sum(points1) / num_sims
+                        highestPoints1 = max(points1)
+                        lowestPoints1 = min(points1)
+                        
+                        squared_diffsP = [(x - mean_points1) ** 2 for x in points1]
+                        varP = sum(squared_diffsP) / num_sims
+                        stdP1 = math.sqrt(varP)
+
+                        st.subheader(f"Mean Number of Points Won: {mean_points1:.2f}")
+                        st.subheader(f"Highest Number of Points Won: {highestPoints1}")
+                        st.subheader(f"Lowest Number of Points Won: {lowestPoints1}")
+                        st.subheader(f"Standard Deviation of Points Won: {stdP1:.2f}")
+
+                        ### Probability to win by ___ points or more
+                        to_cover = st.number_input("Probability to win by ___ points or more", min_value=0, max_value=None, value=0, key='cover1Pt')
+                        prob_coverP = len([x for x in points_spread if x <= -to_cover]) / num_sims
+                        st.write(f"Probability of winning by {to_cover} points or more: {prob_coverP:.2f}")
+
+
+                    with play2P:
+
+                        st.header(player2)
+
+                        points2 = sim_data[10]
+
+                        mean_points2 = sum(points2) / num_sims
+                        highestPoints2 = max(points2)
+                        lowestPoints2 = min(points2)
+                        
+                        squared_diffsP2 = [(x - mean_points2) ** 2 for x in points2]
+                        varP2 = sum(squared_diffsP2) / num_sims
+                        stdP2 = math.sqrt(varP2)
+
+                        st.subheader(f"Mean Number of Points Won: {mean_points2:.2f}")
+                        st.subheader(f"Highest Number of Points Won: {highestPoints2}")
+                        st.subheader(f"Lowest Number of Points Won: {lowestPoints2}")
+                        st.subheader(f"Standard Deviation of Points Won: {stdP2:.2f}")
+
+                        ### Probability to win by ___ points or more
+                        to_cover2 = st.number_input("Probability to win by ___ points or more", min_value=0, max_value=None, value=0, key='cover2Pt')
+                        prob_coverP2 = len([x for x in points_spread if x >= to_cover2]) / num_sims
+                        st.write(f"Probability of winning by {to_cover2} points or more: {prob_coverP2:.2f}")
+
+
+                    with graphP:
+
+
+                        @st.cache_data
+                        def printPointsSpreadGraph(points_spread):
+
+                            uniquePt, countsPt = np.unique(points_spread, return_counts=True)
+
+                            bar_xPt = uniquePt
+                            bar_yPt = np.round(countsPt / num_sims, 4)
+
+
+                            kdePt = gaussian_kde(points_spread)
+                            x_valsPt = np.linspace(min(points_spread) - 1, max(points_spread) + 1, 500)
+                            kde_yPt = kdePt(x_valsPt)
+
+                            figPt = go.Figure()
+
+                            # barplot
+                            figPt.add_trace(go.Bar(x=bar_xPt, y=bar_yPt, name="Probability", marker_color="white"))
+
+                            # distribution curve
+                            figPt.add_trace(go.Scatter(x=x_valsPt, y=kde_yPt, mode='lines', name="Probability Distribution", line=dict(color='orange', width=2)))
+
+                            # Customize layout
+                            figPt.update_layout(
+                                title={
+                                    "text": f"<span style='font-size: 30px;'>Points Spread Probability</span><br>{player2} points - {player1} points<sup></sup>",
+                                    "x": 0.5,  # Center the title
+                                    "xanchor": "center",
+                                },
+                                xaxis=dict(
+                                    title="<span style='font-size: 24px;'>Points Spread</span>",  # Fix the title syntax here
+                                    showgrid=True
+                                ),
+                                yaxis=dict(
+                                    title="<span style='font-size: 24px;'>Probability</span>",  # Fix the title syntax here
+                                    showgrid=True
+                                ),
+                                legend=dict(x=0.7, y=1),
+                                template="plotly",
+                                height=500
+                            )
+
+                            # Display the plot in Streamlit
+                            st.plotly_chart(figPt, use_container_width=True)     
+
+                            # output mean total games
+                            spread_mean = sum(points_spread) / num_sims
+                            st.markdown(f'<h3 style="text-align: center;">Mean Points Spread: {spread_mean:.2f}</h3>', unsafe_allow_html=True) 
+
+                        printPointsSpreadGraph(points_spread)
+                
+            with misc:
+                tiebreaker_prob = sum(sim_data[15]) / num_sims
+                st.subheader(f"Probability of a tiebreak: {tiebreaker_prob:.2f}")
+
+                toNil_prob = sum(sim_data[16]) / num_sims
+                st.subheader(f"Probability of a 6 to Nil set: {toNil_prob:.2f}")
+                    
+
 
 
 
