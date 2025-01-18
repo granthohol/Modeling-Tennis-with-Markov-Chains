@@ -24,6 +24,8 @@ class Match():
         self.p1PtsTot = p1PtsTot
         self.p2PtsTot = p2PtsTot
         self.serving = serving
+        self.tiebreaker = False
+        self.toNil = False
 
         ''' Parameters:
         - player1: The player object 
@@ -222,6 +224,9 @@ class Match():
 
             # check for tiebreak
             if player1_games == 6 and player2_games == 6:
+
+                self.tiebreaker = True # be able to return that there was a tiebreaker
+
                 # player 1 wins tiebreak and set
                 if self.simulate_set_tiebreak((p1_serve + p1_ret)/2): # pass the probability of player1 winning any point since tiebreaks are ~ even on serves
                     self.p1GamesTot += 7 
@@ -252,6 +257,10 @@ class Match():
                 self.p1GamesTot += player1_games
                 self.p2GamesTot += player2_games
 
+                # check if 6 to 0 set
+                if player2_games == 0:
+                    self.toNil = True
+
                 # if it is p1 turn to serve, set self.serving = 1 so that sim next set knows
                 if p1_serving == True:
                     self.serving = 1
@@ -263,6 +272,10 @@ class Match():
             if player2_games >= 6 and player2_games - player1_games > 1:
                 self.p1GamesTot += player1_games
                 self.p2GamesTot += player2_games
+
+                # check if 6 to 0 set
+                if player1_games == 0:
+                    self.toNil = True
 
                 # if it is p1 turn to serve, set self.serving = 1 so that sim next set knows
                 if p1_serving == True:
@@ -304,10 +317,12 @@ class Match():
             self.p2GamesTot - self.p1GamesTot, 
             self.p1PtsTot,
             self.p2PtsTot,
-            self.p1PtsTot - self.p2PtsTot,
+            self.p2PtsTot - self.p1PtsTot,
             self.p1GamesTot + self.p2GamesTot,
             self.p1PtsTot + self.p2PtsTot,
-            self.p1Sets + self.p2Sets
+            self.p1Sets + self.p2Sets,
+            self.tiebreaker,
+            self.toNil
         ]
 
         return match_data
