@@ -7,7 +7,7 @@ import plotly.graph_objs as go
 import numpy as np
 import math
 from scipy.stats import gaussian_kde
-import time
+import statistics
 
 def set_wide():
     '''
@@ -127,6 +127,14 @@ def main():
             with sets:
                 play1, graph, play2 = st.columns([0.3, 0.4, 0.3])
 
+                @st.cache_data
+                def p1RetandServe():
+                    matchh = Match(Player(player1), Player(player2), surface, best_out_of, p1SetsWon, p2SetsWon, p1GamesThis, p2GamesThis, p1GamesAll, p2GamesAll, p1PtsThis, p2PtsThis, p1PtsAll, p2PtsAll, p_serving)
+                    return [matchh.getP1Serve()*100, matchh.getP1Ret()*100]
+
+
+
+
                 with play1:
                     st.header(player1)
 
@@ -134,9 +142,12 @@ def main():
                     prob_win_set1 = (sim_data[1].count(player1) / num_sims) * 100
                     prob_win_game1 = (sim_data[2].count(player1) / num_sims) * 100
 
-                    st.subheader(f"Probability to win the match: {prob_win_match1:.2f}%")
-                    st.subheader(f"Probability to win current set: {prob_win_set1:.2f}%")
-                    st.subheader(f"Probability to win current game: {prob_win_game1:.2f}%") 
+
+                    st.subheader(f"Probability to win the *match*: {prob_win_match1:.2f}%")
+                    st.subheader(f"Probability to win current *set*: {prob_win_set1:.2f}%")
+                    st.subheader(f"Probability to win current *game*: {prob_win_game1:.2f}%") 
+                    st.subheader(f"Probability to win a *service point*: {p1RetandServe()[0]:.2f}%")
+                    st.subheader(f"Probability to win a *return point*: {p1RetandServe()[1]:.2f}%")
 
                     choice = st.selectbox("Probability to win exactly ___ sets", [0, 1, 2, 3], key=f"play1choice")
 
@@ -150,9 +161,11 @@ def main():
                     prob_win_set2 = (sim_data[1].count(player2) / num_sims) * 100
                     prob_win_game2 = (sim_data[2].count(player2) / num_sims) * 100 
 
-                    st.subheader(f"Probability to win the match: {prob_win_match2:.2f}%")
-                    st.subheader(f"Probability to win current set: {prob_win_set2:.2f}%")
-                    st.subheader(f"Probability to win current game: {prob_win_game2:.2f}%") 
+                    st.subheader(f"Probability to win the *match*: {prob_win_match2:.2f}%")
+                    st.subheader(f"Probability to win current *set*: {prob_win_set2:.2f}%")
+                    st.subheader(f"Probability to win current *game*: {prob_win_game2:.2f}%") 
+                    st.subheader(f"Probability to win a *service point*: {(1-p1RetandServe()[1])*100:.2f}%")
+                    st.subheader(f"Probability to win a *return point*: {(1-p1RetandServe()[0]):.2f}%")
 
                     choice2 = st.selectbox("Probability to win exactly ___ sets", [0, 1, 2, 3], key=f"play2choice")
 
@@ -281,9 +294,7 @@ def main():
                         highest = max(games1)
                         lowest = min(games1)
 
-                        squared_diffs = [(x - mean_won) ** 2 for x in games1]
-                        var = sum(squared_diffs) / num_sims
-                        std = math.sqrt(var)
+                        std = statistics.stdev(games1)
 
                         st.subheader(f"Mean Games Won: {mean_won:.2f}")
                         st.subheader(f"Highest Number of Games Won: {highest}")
@@ -313,9 +324,7 @@ def main():
                         highest2 = max(games2)
                         lowest2 = min(games2)
 
-                        squared_diffs = [(x - mean_won2) ** 2 for x in games2]
-                        var = sum(squared_diffs) / num_sims
-                        std2 = math.sqrt(var)
+                        std2 = statistics.stdev(games2)
 
                         st.subheader(f"Mean Games Won: {mean_won2:.2f}")
                         st.subheader(f"Highest Number of Games Won: {highest2}")
@@ -324,7 +333,7 @@ def main():
 
                         # cover spread probability 
                         coverSpread2 = st.number_input("Probability to win by ___ games or more", min_value=0, max_value=None, value=0, key=f"cover2")
-                        prob_cover2 = len([x for x in spreadG if x >= coverSpread1]) / num_sims
+                        prob_cover2 = len([x for x in spreadG if x >= coverSpread2]) / num_sims
                         st.write(f"Probability to win by {coverSpread2} games or more: {prob_cover2:.2f}")
 
                         st.write("\n")
@@ -388,6 +397,11 @@ def main():
                             # output mean games spread
                             games_spread_mean = sum(spreadG) / num_sims
                             st.markdown(f'<h3 style="text-align: center;">Mean Games Spread: {games_spread_mean:.2f}</h3>', unsafe_allow_html=True)
+
+                            games_spread_std = statistics.stdev(spreadG)
+                            st.markdown(f'<h3 style="text-align: center;">Mean Games Standard Deviation: {games_spread_std:.2f}</h3>', unsafe_allow_html=True)
+
+
                             # end method
 
                         printSpreadGraphG(spreadG)      
@@ -447,6 +461,10 @@ def main():
                             # output mean total games
                             games_total_mean = sum(totG) / num_sims
                             st.markdown(f'<h3 style="text-align: center;">Mean Number of Games: {games_total_mean:.2f}</h3>', unsafe_allow_html=True)
+
+                            games_total_std = statistics.stdev(totG)
+                            st.markdown(f'<h3 style="text-align: center;">Mean Number of Games Standard Deviation: {games_total_std:.2f}</h3>', unsafe_allow_html=True)
+
 
                             ### end method
 
@@ -519,9 +537,7 @@ def main():
                         highestPoints1 = max(points1)
                         lowestPoints1 = min(points1)
                         
-                        squared_diffsP = [(x - mean_points1) ** 2 for x in points1]
-                        varP = sum(squared_diffsP) / num_sims
-                        stdP1 = math.sqrt(varP)
+                        stdP1 = statistics.stdev(points1)
 
                         st.subheader(f"Mean Number of Points Won: {mean_points1:.2f}")
                         st.subheader(f"Highest Number of Points Won: {highestPoints1}")
@@ -543,10 +559,8 @@ def main():
                         mean_points2 = sum(points2) / num_sims
                         highestPoints2 = max(points2)
                         lowestPoints2 = min(points2)
-                        
-                        squared_diffsP2 = [(x - mean_points2) ** 2 for x in points2]
-                        varP2 = sum(squared_diffsP2) / num_sims
-                        stdP2 = math.sqrt(varP2)
+
+                        stdP2 = statistics.stdev(points2)
 
                         st.subheader(f"Mean Number of Points Won: {mean_points2:.2f}")
                         st.subheader(f"Highest Number of Points Won: {highestPoints2}")
@@ -610,14 +624,22 @@ def main():
                             spread_mean = sum(points_spread) / num_sims
                             st.markdown(f'<h3 style="text-align: center;">Mean Points Spread: {spread_mean:.2f}</h3>', unsafe_allow_html=True) 
 
+                            spread_std = statistics.stdev(points_spread)
+                            st.markdown(f'<h3 style="text-align: center;">Mean Points Standard Deviation: {spread_std:.2f}</h3>', unsafe_allow_html=True) 
+
+
                         printPointsSpreadGraph(points_spread)
                 
             with misc:
-                tiebreaker_prob = sum(sim_data[15]) / num_sims
-                st.subheader(f"Probability of a tiebreak: {tiebreaker_prob:.2f}")
+                tiebreaker_prob = (sum(sim_data[15]) / num_sims) * 100
+                st.markdown(f"<h3 style='text-align: center;'>Probability of a tiebreak: {tiebreaker_prob:.2f}%</h3>", unsafe_allow_html=True)
 
-                toNil_prob = sum(sim_data[16]) / num_sims
-                st.subheader(f"Probability of a 6 to Nil set: {toNil_prob:.2f}")
+                #st.subheader(f"Probability of a tiebreak: {tiebreaker_prob:.2f}")
+
+                toNil_prob = (sum(sim_data[16]) / num_sims) * 100
+                st.markdown(f"<h3 style='text-align: center;'>Probability of a 6 to Nil set: {toNil_prob:.2f}%</h3>", unsafe_allow_html=True)
+
+                #st.subheader(f"Probability of a 6 to Nil set: {toNil_prob:.2f}")
                     
 
 
