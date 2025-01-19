@@ -644,7 +644,29 @@ def main():
                 st.markdown(f"<h3 style='text-align: center;'>Probability of a 6 to Nil set: {toNil_prob:.2f}%</h3>", unsafe_allow_html=True)
 
                 #st.subheader(f"Probability of a 6 to Nil set: {toNil_prob:.2f}")
-                    
+
+    with about:
+        st.header('Methodology')
+        st.markdown('The basis of the simulation starts with determining the probability of each player winning a service and return point. This is first calculated by finding the probability to win any given point.' +
+                    ' The probability to win any given point is derived from a players ELO rating on the surface. Looking at historical data, I built a function that outputs the probability '+
+                    'of winning a point based on the difference between ELO ratings. From there, we need to find how these wins are split between service and return points. '+
+                    'Again, looking at historical data, each player is given a ratio of how often they win service points compared to return points. For a given matchup, these ratios, '+
+                    'combined with the point win probability function, determine a service point and return point probability for each player. ' + 
+                    'Now that we have those probabilities, we can simulate a tennis match using basic logic, starting from point to point probabilities.')
+        st.write('')
+        st.header('The Data')
+        st.markdown("Now, where does this 'historica data' come from? At the run of each new simulation, player ELO ratings are scraped from [Tennis Abstract](https://tennisabstract.com/reports/atp_elo_ratings.html) " + 
+                    "which updates ELO ratings weekly. The service to return point ratio data is calculated from a [Kaggle dataset](https://www.kaggle.com/datasets/mohammadkumail110/tennis-player-data-serve-return-and-raw)" + 
+                    " that has match by match historical data.")
+
+    with contact:
+        st.header('Grant Hohol')
+        st.subheader('I am a sophomore Computer Sciences and Statistics undergraduate at the University of Wisconsin-Madison. You can contact me or see more of my work at the following links.')
+        st.markdown("~ Github: [@granthohol](https://github.com/granthohol/)")
+        st.markdown("~ [LinkedIn](https://www.linkedin.com/in/grant-hohol-08520b291/)")
+        st.markdown("~ X (Twitter): [@granthohol55](https://x.com/granthohol55)")
+        st.write("~ Email: ghohol@wisc.edu")
+        st.write("~ Phone: 920-370-2380")                    
 
 
 
