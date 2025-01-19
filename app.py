@@ -39,6 +39,11 @@ def sim(player1, player2, surface, best_out_of, p1SetsWon, p2SetsWon, p1GamesThi
             sim_data[i].append(data)    
 
     return sim_data
+     
+@st.cache_data
+def p1RetandServe(player1, player2, surface, best_out_of, p1SetsWon, p2SetsWon, p1GamesThis, p2GamesThis, p1GamesAll, p2GamesAll, p1PtsThis, p2PtsThis, p1PtsAll, p2PtsAll, p_serving):
+    matchh = Match(Player(player1), Player(player2), surface, best_out_of, p1SetsWon, p2SetsWon, p1GamesThis, p2GamesThis, p1GamesAll, p2GamesAll, p1PtsThis, p2PtsThis, p1PtsAll, p2PtsAll, p_serving)
+    return [matchh.getP1Serve()*100, matchh.getP1Ret()*100]
 
 def main():
 
@@ -116,9 +121,14 @@ def main():
             
             st.session_state.sim_data = sim(player1, player2, surface, best_out_of, p1SetsWon, p2SetsWon, p1GamesThis, p2GamesThis, p1GamesAll, p2GamesAll, p1PtsThis, p2PtsThis, p1PtsAll, p2PtsAll, p_serving, num_sims)
 
+            st.session_state.retandserve = p1RetandServe(player1, player2, surface, best_out_of, p1SetsWon, p2SetsWon, p1GamesThis, p2GamesThis, p1GamesAll, p2GamesAll, p1PtsThis, p2PtsThis, p1PtsAll, p2PtsAll, p_serving)
+
+
+                
         # If simulation is done, display results
         if st.session_state.calculate and st.session_state.sim_data:
             sim_data = st.session_state.sim_data
+            retandserve = st.session_state.retandserve      
 
             sets, games, points, misc = st.tabs(['Sets', 'Games', 'Points', 'Misc'])
 
@@ -126,12 +136,6 @@ def main():
             ########### Sets Tab #############
             with sets:
                 play1, graph, play2 = st.columns([0.3, 0.4, 0.3])
-
-                @st.cache_data
-                def p1RetandServe():
-                    matchh = Match(Player(player1), Player(player2), surface, best_out_of, p1SetsWon, p2SetsWon, p1GamesThis, p2GamesThis, p1GamesAll, p2GamesAll, p1PtsThis, p2PtsThis, p1PtsAll, p2PtsAll, p_serving)
-                    return [matchh.getP1Serve()*100, matchh.getP1Ret()*100]
-
 
 
 
@@ -146,8 +150,8 @@ def main():
                     st.subheader(f"Probability to win the *match*: {prob_win_match1:.2f}%")
                     st.subheader(f"Probability to win current *set*: {prob_win_set1:.2f}%")
                     st.subheader(f"Probability to win current *game*: {prob_win_game1:.2f}%") 
-                    st.subheader(f"Probability to win a *service point*: {p1RetandServe()[0]:.2f}%")
-                    st.subheader(f"Probability to win a *return point*: {p1RetandServe()[1]:.2f}%")
+                    st.subheader(f"Probability to win a *service point*: {retandserve[0]:.2f}%")
+                    st.subheader(f"Probability to win a *return point*: {retandserve[1]:.2f}%")
 
                     choice = st.selectbox("Probability to win exactly ___ sets", [0, 1, 2, 3], key=f"play1choice")
 
@@ -164,8 +168,8 @@ def main():
                     st.subheader(f"Probability to win the *match*: {prob_win_match2:.2f}%")
                     st.subheader(f"Probability to win current *set*: {prob_win_set2:.2f}%")
                     st.subheader(f"Probability to win current *game*: {prob_win_game2:.2f}%") 
-                    st.subheader(f"Probability to win a *service point*: {(1-p1RetandServe()[1])*100:.2f}%")
-                    st.subheader(f"Probability to win a *return point*: {(1-p1RetandServe()[0]):.2f}%")
+                    st.subheader(f"Probability to win a *service point*: {(100-retandserve[1]):.2f}%")
+                    st.subheader(f"Probability to win a *return point*: {(100-retandserve[0]):.2f}%")
 
                     choice2 = st.selectbox("Probability to win exactly ___ sets", [0, 1, 2, 3], key=f"play2choice")
 
