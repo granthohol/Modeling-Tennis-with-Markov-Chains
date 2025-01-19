@@ -98,7 +98,7 @@ def simulate_set_tiebreak(p_point: float):
         if opponent_score >= 7 and opponent_score - player_score > 1:
             return False 
         
-def find_point_probability(target_match_probability, best_out_of, tolerance=0.0001, simulations = 50000):
+def find_point_probability(target_match_probability, best_out_of, tolerance=0.001, simulations = 10000):
     """
     Uses a binary search to estimate the point probability that results in the target match probability.
     """
@@ -126,28 +126,35 @@ def fiveOdds(p3):
 
 
 def main():
+    points5 = [[0, 0.5], [100, fiveOdds(0.64)], [200, fiveOdds(0.76)], [300, fiveOdds(0.85)], [400, fiveOdds(0.91)], [500, fiveOdds(0.95)]]
 
-    fivehun3 = find_point_probability(0.95, 3)
-    fourhun3 = find_point_probability(0.91, 3)
-    threehun3 = find_point_probability(0.85, 3)
-    twohun3 = find_point_probability(0.76, 3)
-    hun3 = find_point_probability(0.64, 3)
+    x5, y5 = zip(*points5)
 
-    fivehun5 = find_point_probability(fiveOdds(0.95), 5)
-    fourhun5 = find_point_probability(fiveOdds(0.91), 5)
-    threehun5 = find_point_probability(fiveOdds(0.85), 5)
-    twohun5 = find_point_probability(fiveOdds(0.76), 5)
-    hun5 = find_point_probability(fiveOdds(0.64), 5)
+    fiveSetFunc = CubicSpline(x5, y5) # determines winning percentage on 5 set matches from elo difference
 
-    points = [[0, 0.5], [100, (hun3+hun5)/2], [200, (twohun3+twohun5)/2], [300, (threehun3+threehun5)/2], [400, (fourhun3+fourhun5)/2], [500, (fivehun3+fivehun5)/2]]
+    points3 = [[0, 0.5], [100, 0.64], [200, 0.76], [300, 0.85], [400, 0.91], [500, 0.95]] 
 
-    x, y = zip(*points)
+    x3, y3 = zip(*points3)
+
+    threeSetFunc = CubicSpline(x3, y3) # determines winning percentage on 3 set matches from elo difference  
+
+    point_probs = []
+    for i in range(1, 501):
+        point_prob = find_point_probability(fiveSetFunc(i), 5)
+        point_prob2 = find_point_probability(threeSetFunc(i), 3)
+        avg = (point_prob + point_prob2)/2
+        point_probs.append([i, avg])
+
+
+    x, y = zip(*point_probs)
 
     cs = CubicSpline(x, y)
 
-    # save the function to a file
-    with open('point_by_elo.pkl', 'wb') as file:
-        pickle.dump(cs, file)
+     # save the function to a file
+    with open('point_prob_by_elo.pkl', 'wb') as file:
+        pickle.dump(cs, file)  
+
+
 
     # Generate a range of x values for a smooth curve
     x_smooth = np.linspace(min(x), max(x), 500)
@@ -169,7 +176,7 @@ def main():
 
     # Show the plot
     plt.grid()
-    plt.show()
+    plt.show() 
 
 if __name__ == "__main__":
     main()
