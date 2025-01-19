@@ -34,7 +34,7 @@ def p1PtProb(player1: Player, player2: Player, surface: str):
     elo_diff = p1Elo - p2Elo
 
     # function to determine probability to win a point based off of elo difference
-    with open('point_by_elo.pkl', 'rb') as file:
+    with open('point_prob_by_elo.pkl', 'rb') as file:
         point_by_elo_func = pickle.load(file)
 
     # 0.000123 is the ~ percentage increase above 0.5 that 1 elo point has for winning any given point -- see eloReverseEngineer.py
