@@ -229,7 +229,7 @@ def main():
                             st.markdown(f'<h3 style="text-align: center;">Mean Sets Spread: {spread_mean}</h3>', unsafe_allow_html=True)
 
                         spread_std = statistics.stdev(spread)
-                        st.markdown(f'<h3 style="text-align: center;">Mean Sets Standard Deviation: +{spread_std}</h3>', unsafe_allow_html=True)
+                        st.markdown(f'<h3 style="text-align: center;">Mean Sets Standard Deviation: +{spread_std:.2f}</h3>', unsafe_allow_html=True)
 
                     printGraph1(spread)
 
@@ -285,7 +285,7 @@ def main():
                         sets_mean = round(sum(total_sets) / num_sims, 2)
                         st.markdown(f'<h3 style="text-align: center;">Mean Total Number of Sets: {sets_mean}</h3>', unsafe_allow_html=True)
                         sets_std = statistics.stdev(total_sets)
-                        st.markdown(f'<h3 style="text-align: center;">Total Number of Sets Standard Deviation: {sets_std}</h3>', unsafe_allow_html=True)
+                        st.markdown(f'<h3 style="text-align: center;">Total Number of Sets Standard Deviation: {sets_std:.2f}</h3>', unsafe_allow_html=True)
 
 
                     printGraph2(total_sets)
