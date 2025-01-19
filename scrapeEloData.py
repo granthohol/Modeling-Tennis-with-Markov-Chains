@@ -94,7 +94,7 @@ def scrape_player_names():
     df = df.dropna()
     df = df['Player']
     
-    df2 = pd.read_csv('https://raw.githubusercontent.com/granthohol/Modeling-Tennis-with-Markov-Chains/main/Data/golden_ratio_data.csv')
+    df2 = pd.read_csv('Data/golden_ratio_data.csv')
     df2 = df2.drop_duplicates().dropna()
     df2_names = df2['Name']
 
