@@ -314,10 +314,7 @@ def main():
                         # cover spread probability
                         spreadG = sim_data[8]
                         coverSpread1 = st.text_input("Probability to win by ___ games or more", value='0')
-                        try:
-                            float(coverSpread1)
-                        except Exception:
-                            raise ValueError("Please enter a valid number") 
+                        coverSpread1 = float(coverSpread1)
                         prob_cover = len([x for x in spreadG if x <= -coverSpread1]) / num_sims
                         st.write(f"Probability to win by {coverSpread1} games or more: {prob_cover:.2f}")
 
