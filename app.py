@@ -262,7 +262,7 @@ def main():
                         # Customize layout
                         fig2.update_layout(
                             title={
-                                "text": f"<span style='font-size: 30px;'>Total Number of Sets Probability</span>",
+                                "text": f"<span style='font-size: 30px;'>Number of Sets Probability</span>",
                                 "x": 0.5,  # Center the title
                                 "xanchor": "center",
                             },
@@ -448,7 +448,7 @@ def main():
                             # Customize layout
                             figTotG.update_layout(
                                 title={
-                                    "text": f"<span style='font-size: 30px;'>Total Number of Games Probability</span>",
+                                    "text": f"<span style='font-size: 30px;'>Number of Games Probability</span>",
                                     "x": 0.5,  # Center the title
                                     "xanchor": "center",
                                 },
