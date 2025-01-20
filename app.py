@@ -492,7 +492,7 @@ def main():
                             '''
                             Method to compute and return the cumulative number of occurences of each number of games in the sim
                             '''
-                            totG_sorted = sorted(totG)
+                            totG_sorted = str(sorted(totG))
                             cumulative_counts = {}
                             n = len(totG_sorted)
                             for i, value in enumerate(totG_sorted):
