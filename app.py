@@ -519,7 +519,7 @@ def main():
                             "Probability of ___ games or more:",
                             min_value=0, 
                             max_value=None,
-                            value='0',
+                            value=0,
                             key="total_more",
                             on_change=lambda: st.session_state.update({
                                 "prob_total_more": calculate_probability_totG(
