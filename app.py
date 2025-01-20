@@ -515,11 +515,9 @@ def main():
                         cum_counts = precompute_cumulative_counts(totG)
 
                         # Define number input with a callback
-                        st.number_input(
+                        st.text_input(
                             "Probability of ___ games or more:",
-                            min_value=0,
-                            max_value=None,
-                            value=0,
+                            value='0',
                             key="total_more",
                             on_change=lambda: st.session_state.update({
                                 "prob_total_more": calculate_probability_totG(
@@ -559,7 +557,8 @@ def main():
                         st.subheader(f"Standard Deviation of Points Won: {stdP1:.2f}")
 
                         ### Probability to win by ___ points or more
-                        to_cover = st.number_input("Probability to win by ___ points or more", min_value=0, max_value=None, value=0, key='cover1Pt')
+                        to_cover = st.text_input("Probability to win by ___ points or more", value=0, key='cover1Pt')
+                        to_cover = float(to_cover)
                         prob_coverP = len([x for x in points_spread if x <= -to_cover]) / num_sims
                         st.write(f"Probability of winning by {to_cover} points or more: {prob_coverP:.2f}")
 
@@ -582,7 +581,8 @@ def main():
                         st.subheader(f"Standard Deviation of Points Won: {stdP2:.2f}")
 
                         ### Probability to win by ___ points or more
-                        to_cover2 = st.number_input("Probability to win by ___ points or more", min_value=0, max_value=None, value=0, key='cover2Pt')
+                        to_cover2 = st.text_input("Probability to win by ___ points or more", value=0, key='cover2Pt')
+                        to_cover2 = float(to_cover2)
                         prob_coverP2 = len([x for x in points_spread if x >= to_cover2]) / num_sims
                         st.write(f"Probability of winning by {to_cover2} points or more: {prob_coverP2:.2f}")
 
