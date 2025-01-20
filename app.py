@@ -321,7 +321,8 @@ def main():
                         st.write("\n")
                     
                         # total games won probability 
-                        moreThan1 = st.number_input("Probability to win >= ___ games", min_value=0, max_value=None, value=0, key=f"play1More")
+                        moreThan1 = st.text_input("Probability to win >= ___ games", value=0, key=f"play1More")
+                        moreThan1 = float(moreThan1)
                         prob_more_than = len([x for x in games1 if x >= moreThan1]) / num_sims
                         st.write(f"Probability to win {moreThan1} games or more: {prob_more_than:.2f}")
 
@@ -343,14 +344,16 @@ def main():
                         st.subheader(f"Standard Deviation of Games Won: {std2:.2f}")
 
                         # cover spread probability 
-                        coverSpread2 = st.number_input("Probability to win by ___ games or more", min_value=0, max_value=None, value=0, key=f"cover2")
+                        coverSpread2 = st.text_input("Probability to win by ___ games or more", value=0, key=f"cover2")
+                        coverSpread2 = float(coverSpread2)
                         prob_cover2 = len([x for x in spreadG if x >= coverSpread2]) / num_sims
                         st.write(f"Probability to win by {coverSpread2} games or more: {prob_cover2:.2f}")
 
                         st.write("\n")
 
                         # total games won probability
-                        moreThan2 = st.number_input("Probability to win >= ___ games", min_value=0, max_value=None, value=0, key=f"play2More")
+                        moreThan2 = st.text_input("Probability to win >= ___ games", value=0, key=f"play2More")
+                        moreThan2 = float(moreThan2)
                         prob_more_than2 = len([x for x in games2 if x >= moreThan2]) / num_sims
                         st.write(f"Probability to win {moreThan2} games or more: {prob_more_than2:.2f}")                        
 
