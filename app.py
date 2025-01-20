@@ -492,7 +492,7 @@ def main():
                             '''
                             Method to compute and return the cumulative number of occurences of each number of games in the sim
                             '''
-                            totG_sorted = str(sorted(totG))
+                            totG_sorted = sorted(totG)
                             cumulative_counts = {}
                             n = len(totG_sorted)
                             for i, value in enumerate(totG_sorted):
@@ -515,8 +515,10 @@ def main():
                         cum_counts = precompute_cumulative_counts(totG)
 
                         # Define number input with a callback
-                        st.text_input(
+                        st.number_input(
                             "Probability of ___ games or more:",
+                            min_value=0, 
+                            max_value=None,
                             value='0',
                             key="total_more",
                             on_change=lambda: st.session_state.update({
