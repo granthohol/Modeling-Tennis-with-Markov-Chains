@@ -313,7 +313,7 @@ def main():
                         
                         # cover spread probability
                         spreadG = sim_data[8]
-                        coverSpread1 = st.text("Probability to win by ___ games or more", min_value=0, max_value=None, value=0, key=f"cover1")
+                        coverSpread1 = st.text("Probability to win by ___ games or more",key=f"cover1")
                         try:
                             float(coverSpread1)
                         except Exception:
