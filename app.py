@@ -37,6 +37,7 @@ def sim(player1, player2, surface, best_out_of, p1SetsWon, p2SetsWon, p1GamesThi
         # add the data from this sim to the dictionary
         for i, data in enumerate(match_data):
             sim_data[i].append(data)   
+            
     sim_data[17].append(p1_serve)
     sim_data[18].append(p1_ret) 
 
@@ -118,21 +119,17 @@ def main():
         if 'calculate' not in st.session_state:
             st.session_state.calculate = False
 
-        if 'retandserve' not in st.session_state:
-            st.session_state.retandserve = None
-
         # Perform the simulation if not already done
         if calculate:
             st.session_state.calculate = True  # Set calculation to True after button click
             
             st.session_state.sim_data = sim(player1, player2, surface, best_out_of, p1SetsWon, p2SetsWon, p1GamesThis, p2GamesThis, p1GamesAll, p2GamesAll, p1PtsThis, p2PtsThis, p1PtsAll, p2PtsAll, p_serving, num_sims)
 
-           # st.session_state.retandserve = p1RetandServe(player1, player2, surface, best_out_of, p1SetsWon, p2SetsWon, p1GamesThis, p2GamesThis, p1GamesAll, p2GamesAll, p1PtsThis, p2PtsThis, p1PtsAll, p2PtsAll, p_serving)
 
 
                 
         # If simulation is done, display results
-        if st.session_state.calculate and st.session_state.sim_data: #and st.session_state.retandserve:
+        if st.session_state.calculate and st.session_state.sim_data:
             sim_data = st.session_state.sim_data
             retandserve = [sim_data[17][0], sim_data[18][0]]   
 
