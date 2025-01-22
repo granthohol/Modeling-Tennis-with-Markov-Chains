@@ -36,7 +36,9 @@ def sim(player1, player2, surface, best_out_of, p1SetsWon, p2SetsWon, p1GamesThi
 
         # add the data from this sim to the dictionary
         for i, data in enumerate(match_data):
-            sim_data[i].append(data)    
+            sim_data[i].append(data)   
+    sim_data[18].append(p1_serve)
+    sim_data[19].append(p1_ret) 
 
     return sim_data
 
@@ -132,7 +134,7 @@ def main():
         # If simulation is done, display results
         if st.session_state.calculate and st.session_state.sim_data: #and st.session_state.retandserve:
             sim_data = st.session_state.sim_data
-            retandserve = [sim_data[17], sim_data[18]]   
+            retandserve = [sim_data[17][0], sim_data[18][0]]   
 
             sets, games, points, misc = st.tabs(['Sets', 'Games', 'Points', 'Misc'])
 

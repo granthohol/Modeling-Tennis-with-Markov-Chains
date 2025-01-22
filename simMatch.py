@@ -324,8 +324,6 @@ class Match():
             self.p1Sets + self.p2Sets,
             self.tiebreaker,
             self.toNil,
-            self.getP1Serve(),
-            self.getP1Ret()
         ]
 
         return match_data
