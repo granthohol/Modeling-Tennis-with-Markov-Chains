@@ -20,7 +20,7 @@ def sim(player1, player2, surface, best_out_of, p1SetsWon, p2SetsWon, p1GamesThi
     '''
     Main match simulation call method. Stores the data from the simMatch method call and returns it as a list.
     '''
-    sim_data = [[] for _ in range(17)]
+    sim_data = [[] for _ in range(19)]
         
     p1 = Player(player1)
     p2 = Player(player2)
@@ -39,11 +39,12 @@ def sim(player1, player2, surface, best_out_of, p1SetsWon, p2SetsWon, p1GamesThi
             sim_data[i].append(data)    
 
     return sim_data
-     
+
+'''     
 @st.cache_data
 def p1RetandServe(player1, player2, surface, best_out_of, p1SetsWon, p2SetsWon, p1GamesThis, p2GamesThis, p1GamesAll, p2GamesAll, p1PtsThis, p2PtsThis, p1PtsAll, p2PtsAll, p_serving):
     matchh = Match(Player(player1), Player(player2), surface, best_out_of, p1SetsWon, p2SetsWon, p1GamesThis, p2GamesThis, p1GamesAll, p2GamesAll, p1PtsThis, p2PtsThis, p1PtsAll, p2PtsAll, p_serving)
-    return [matchh.getP1Serve()*100, matchh.getP1Ret()*100]
+    return [matchh.getP1Serve()*100, matchh.getP1Ret()*100] '''
 
 def main():
 
@@ -124,14 +125,14 @@ def main():
             
             st.session_state.sim_data = sim(player1, player2, surface, best_out_of, p1SetsWon, p2SetsWon, p1GamesThis, p2GamesThis, p1GamesAll, p2GamesAll, p1PtsThis, p2PtsThis, p1PtsAll, p2PtsAll, p_serving, num_sims)
 
-            st.session_state.retandserve = p1RetandServe(player1, player2, surface, best_out_of, p1SetsWon, p2SetsWon, p1GamesThis, p2GamesThis, p1GamesAll, p2GamesAll, p1PtsThis, p2PtsThis, p1PtsAll, p2PtsAll, p_serving)
+           # st.session_state.retandserve = p1RetandServe(player1, player2, surface, best_out_of, p1SetsWon, p2SetsWon, p1GamesThis, p2GamesThis, p1GamesAll, p2GamesAll, p1PtsThis, p2PtsThis, p1PtsAll, p2PtsAll, p_serving)
 
 
                 
         # If simulation is done, display results
         if st.session_state.calculate and st.session_state.sim_data: #and st.session_state.retandserve:
             sim_data = st.session_state.sim_data
-            retandserve = st.session_state.retandserve      
+            retandserve = [sim_data[17], sim_data[18]]   
 
             sets, games, points, misc = st.tabs(['Sets', 'Games', 'Points', 'Misc'])
 
