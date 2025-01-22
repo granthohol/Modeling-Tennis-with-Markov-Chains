@@ -129,7 +129,7 @@ def main():
 
                 
         # If simulation is done, display results
-        if st.session_state.calculate and st.session_state.sim_data and st.session_state.retandserve:
+        if st.session_state.calculate and st.session_state.sim_data: #and st.session_state.retandserve:
             sim_data = st.session_state.sim_data
             #retandserve = st.session_state.retandserve      
 
