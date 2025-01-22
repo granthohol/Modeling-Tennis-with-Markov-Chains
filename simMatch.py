@@ -26,6 +26,7 @@ class Match():
         self.serving = serving
         self.tiebreaker = False
         self.toNil = False
+    
 
         ''' Parameters:
         - player1: The player object 
@@ -322,7 +323,9 @@ class Match():
             self.p1PtsTot + self.p2PtsTot,
             self.p1Sets + self.p2Sets,
             self.tiebreaker,
-            self.toNil
+            self.toNil,
+            self.getP1Serve(),
+            self.getP1Ret()
         ]
 
         return match_data
