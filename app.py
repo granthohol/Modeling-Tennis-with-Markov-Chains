@@ -40,11 +40,11 @@ def sim(player1, player2, surface, best_out_of, p1SetsWon, p2SetsWon, p1GamesThi
 
     return sim_data
 
-'''     
-@st.cache_data
-def p1RetandServe(player1, player2, surface, best_out_of, p1SetsWon, p2SetsWon, p1GamesThis, p2GamesThis, p1GamesAll, p2GamesAll, p1PtsThis, p2PtsThis, p1PtsAll, p2PtsAll, p_serving):
-    matchh = Match(Player(player1), Player(player2), surface, best_out_of, p1SetsWon, p2SetsWon, p1GamesThis, p2GamesThis, p1GamesAll, p2GamesAll, p1PtsThis, p2PtsThis, p1PtsAll, p2PtsAll, p_serving)
-    return [matchh.getP1Serve()*100, matchh.getP1Ret()*100] '''
+
+#@st.cache_data
+#def p1RetandServe(player1, player2, surface, best_out_of, p1SetsWon, p2SetsWon, p1GamesThis, p2GamesThis, p1GamesAll, p2GamesAll, p1PtsThis, p2PtsThis, p1PtsAll, p2PtsAll, p_serving):
+ #   matchh = Match(Player(player1), Player(player2), surface, best_out_of, p1SetsWon, p2SetsWon, p1GamesThis, p2GamesThis, p1GamesAll, p2GamesAll, p1PtsThis, p2PtsThis, p1PtsAll, p2PtsAll, p_serving)
+  #  return [matchh.getP1Serve()*100, matchh.getP1Ret()*100] '''
 
 def main():
 
