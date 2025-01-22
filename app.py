@@ -121,6 +121,16 @@ def main():
         # Perform the simulation if not already done
         if calculate:
             st.session_state.calculate = True  # Set calculation to True after button click
+
+            if (st.session_state.get("last_player1") != player1 or 
+            st.session_state.get("last_player2") != player2):
+        
+                st.session_state.sim_data = None
+                st.session_state.retandserve = None
+
+            # Store current player selections in session state for future checks
+            st.session_state.last_player1 = player1
+            st.session_state.last_player2 = player2
             
             st.session_state.sim_data = sim(player1, player2, surface, best_out_of, p1SetsWon, p2SetsWon, p1GamesThis, p2GamesThis, p1GamesAll, p2GamesAll, p1PtsThis, p2PtsThis, p1PtsAll, p2PtsAll, p_serving, num_sims)
 
