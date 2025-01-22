@@ -115,6 +115,9 @@ def main():
         if 'calculate' not in st.session_state:
             st.session_state.calculate = False
 
+        if 'retandserve' not in st.session_state:
+            st.session_state.retandserve = None
+
         # Perform the simulation if not already done
         if calculate:
             st.session_state.calculate = True  # Set calculation to True after button click
@@ -126,7 +129,7 @@ def main():
 
                 
         # If simulation is done, display results
-        if st.session_state.calculate and st.session_state.sim_data:
+        if st.session_state.calculate and st.session_state.sim_data and st.session_state.retandserve:
             sim_data = st.session_state.sim_data
             retandserve = st.session_state.retandserve      
 
